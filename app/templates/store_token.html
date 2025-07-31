@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Redirecting...</title>
+  </head>
+  <body>
+    <script>
+      const token = "{{ token }}";
+      localStorage.setItem("access_token", token);
+
+      // ✅ Redirect to posts or homepage
+      window.location.href = "/post";
+    </script>
+  </body>
+</html>

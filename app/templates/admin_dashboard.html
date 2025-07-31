@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Admin Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/admin.css') }}"
+    />
+  </head>
+
+  <body>
+    <div class="container">
+      <a href="/" class="back_btn">X</a>
+
+      <h1>Admin Dashboard</h1>
+      <div id="users-list">
+        <!-- js will load data -->
+      </div>  
+    </div>
+    <script>
+      const token = localStorage.getItem("access_token");
+      const data_container = document.getElementById("users-list");
+
+      const fetchUsers = async () => {
+        fetch("/admin/users", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        })
+          .then((res) => {
+            if (res.ok) {
+              return res.json();
+            } else {
+              throw res.statusText;
+            }
+          })
+          .then((data) => {
+            data_container.innerHTML = "";
+            if (data && data.length > 0) {
+              data.forEach((user) => {
+                const user_card = document.createElement("div");
+                user_card.classList.add("user-card");
+                user_card.innerHTML = `
+        <div>
+          <p><strong>Username:</strong>   ${user.username}</p>
+          <p><strong>Email:</strong> ${user.email}</p>
+        </div>
+        <a href="/admin/delete_user/${user.id}" class="btn danger" onclick="fetchUsers()">Delete</a>
+      
+            `;
+                data_container.appendChild(user_card);
+              });
+            } else {
+              data_container.innerHTML = `<p class="errMsg"> No users found </p>`;
+            }
+          })
+          .catch(
+            (err) =>
+              (data_container.innerHTML = `<p class="errMsg"> ${err} : Admin access required!! </p>`)
+          );
+      };
+
+      fetchUsers();
+    </script>
+  </body>
+</html>

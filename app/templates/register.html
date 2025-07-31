@@ -1,0 +1,68 @@
+{% extends "layout.html" %} {% block title %}Register{% endblock %} {% block
+head %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/register.css') }}"
+/>
+{% endblock %} {% block content %}
+<div class="register-container">
+  <form id="registerForm" class="register-form" method="post">
+    <div class="back-container">
+      <a href="/" class="back_btn">X</a>
+    </div>
+    <h2>Create Account</h2>
+
+    {% if message %}
+    <p class="message">{{ message }}</p>
+    {% endif %}
+
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input type="text" name="name" required />
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" name="email" required />
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" name="password" required />
+    </div>
+
+    <button type="submit" class="register-button">Register</button>
+
+    <p class="login-link">
+      Already have an account?
+      <a href="{{ url_for('auth.login') }}">Login here</a>
+    </p>
+  </form>
+</div>
+
+<script>
+  document
+    .getElementById("registerForm")
+    .addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const name = document.querySelector('input[name="name"]').value;
+      const email = document.querySelector('input[name="email"]').value;
+      const password = document.querySelector('input[name="password"]').value;
+
+      const response = await fetch("/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        window.location.href = "{{ url_for('auth.login') }}";
+      } else {
+        alert(data.message || "Registration failed");
+      }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,30 @@
+# Python cache and compiled files
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Environment variables
+.env
+
+# Virtual environment
+venv/
+env/
+
+# VS Code settings
+.vscode/
+
+# Mac system files
+.DS_Store
+
+# Flask and database artifacts
+instance/
+*.sqlite3
+*.db
+*.log
+
+# Alembic migration history
+migrations/versions/*.pyc
+migrations/versions/__pycache__/
+
+# OS specific
+Thumbs.db

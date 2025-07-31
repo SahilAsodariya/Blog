@@ -1,0 +1,72 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f6f8;
+  padding: 20px;
+  margin: 0;
+}
+
+.container {
+  max-width: 800px;
+  margin: auto;
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+
+.back_btn{
+    padding: 5px 10px;
+    background-color: rgb(144, 142, 142);
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 3px;
+    text-decoration: none;
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+.user-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  background-color: #fafafa;
+}
+
+.user-card p {
+  margin: 4px 0;
+}
+
+.btn.danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn {
+    padding: 8px 12px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+.delete-btn:hover {
+  background-color: #c0392b;
+}
+
+.errMsg{
+  color: red;
+  text-align: center;
+  
+  
+}
