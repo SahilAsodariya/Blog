@@ -139,6 +139,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 10px;
   background-color: #fff;
   padding: 10px 14px;
   border: 1px solid #ddd;

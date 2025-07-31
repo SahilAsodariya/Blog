@@ -203,7 +203,7 @@
                                          .map(
                                            (comment) => `
                                    <div class="comment">
-                                    <div>
+                                    <div style="flex: 12;">
                                       <p><strong>${
                                         comment.user.username
                                       }:</strong> &nbsp; ${comment.content}</p>
@@ -211,7 +211,7 @@
                                         comment.created_at
                                       ).toLocaleString()}</p>
                                     </div>
-                                  <div>
+                                  <div style="flex: 1;">
                                     ${
                                       is_admin
                                         ? `<a
