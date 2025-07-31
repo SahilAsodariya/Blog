@@ -29,7 +29,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"email\" : \"sahil@gmail.com\",\n    \"password\" : \"Sahil@123\"\n}",
+					"raw": "{\n    \"email\" : \"admin90@gmail.com\",\n    \"password\" : \"Admin@123\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -56,7 +56,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"name\" : \"sahil\",\n    \"email\" : \"sahil@gmail.com\",\n    \"password\" : \"Sahil@123\"\n    // \"is_admin\" : true\n}",
+					"raw": "{\n    \"name\" : \"sahil\",\n    \"email\" : \"sahil@gmail.com\",\n    \"password\" : \"Sahil@123\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -265,13 +265,13 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "{{baseUrl}}/comment/delete/<Comment id>",
+					"raw": "{{baseUrl}}/admin/comment_delete/<Comment id>",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
-						"comment",
-						"delete",
+						"admin",
+						"comment_delete",
 						"<Comment id>"
 					]
 				}

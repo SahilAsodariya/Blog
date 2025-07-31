@@ -143,7 +143,6 @@
           .then((res) => res.json())
           .then((data) => {
             // Check if user is admin
-            console.log("admin", data.admin)
             if (userId == data.admin) {
               is_admin = true;
             }
@@ -187,7 +186,7 @@
                                   ${
                                     (token && userId == post.user_id) ||
                                     is_admin
-                                      ? `<a href="/post/delete/${post.id}" class="btn danger">Delete</a>`
+                                      ? `<a onclick="deletePost(${post.id})" class="btn danger">Delete</a>`
                                       : ""
                                   }
                               </div>
@@ -216,7 +215,7 @@
                                     ${
                                       is_admin
                                         ? `<a
-                            href="/comment/delete/${comment.id}"
+                            onclick="deleteComment(${comment.id})"
                             class="btn danger"
                           >
                             Delete
@@ -266,6 +265,58 @@
             document.getElementById(
               "posts-container"
             ).innerHTML = `<p style="color:red;">Unable to fetch posts.</p>`;
+          });
+      };
+
+      // Delete Comment function
+      const deleteComment = (commentId) => {
+        fetch(`/admin/comment_delete/${commentId}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        })
+          .then((res) => {
+            if (res.ok) {
+              return res.json();
+            } else {
+              throw new Error("Failed to delete comment");
+            }
+          })
+          .then((data) => {
+            alert(data.message);
+            func();
+          })
+          .catch((error) => {
+            alert("error:", error);
+          });
+      };
+
+      //Delete Post function
+
+      // Delete Comment function
+      const deletePost = (postId) => {
+        fetch(`/post/delete/${postId}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        })
+          .then((res) => {
+            if (res.ok) {
+              return res.json();
+            } else {
+              throw new Error("Failed to delete post");
+            }
+          })
+          .then((data) => {
+            alert(data.message);
+            func();
+          })
+          .catch((error) => {
+            alert("error:", error);
           });
       };
 

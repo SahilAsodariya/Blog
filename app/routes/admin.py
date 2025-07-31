@@ -2,7 +2,7 @@ from flask import jsonify,Blueprint, render_template
 from flask_jwt_extended import get_jwt_identity, verify_jwt_in_request,jwt_required
 from functools import wraps
 from ..extensions import db
-from ..models import User,Post
+from ..models import User,Comment
 from ..schema.schema import UserSchema# update with actual import
 
 admin_bp = Blueprint('admin',__name__)
@@ -26,6 +26,19 @@ def admin_required(fn):
 @admin_bp.route('/only_admin')
 def only_admin():
     return render_template("admin_dashboard.html")
+
+@admin_bp.route('/comment_delete/<int:id>', methods=['GET','POST','DELETE'])
+@admin_required
+def delete_comment(id):
+    comment = Comment.query.get(id) 
+    
+    if not comment:
+        return jsonify({"error": "Comment not found"}), 404
+    
+    db.session.delete(comment)
+    db.session.commit()
+    return jsonify({"message" :"Comment deleted successfully"})
+
 
 @admin_bp.route('/users', methods=['GET'])
 @admin_required

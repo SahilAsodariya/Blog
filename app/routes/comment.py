@@ -28,16 +28,5 @@ def add_comment(post_id):
         return jsonify({"message": "Comment added successfully"}), 201
     return jsonify({"message": "Invalid request"}), 400 
 
-@comment_bp.route('/delete/<int:id>', methods=['GET','POST','DELETE'])
-def delete_comment(id):
-    comment = Comment.query.get(id) 
-    
-    if not comment:
-        return jsonify({"message": "Comment not found"}), 404
-    
-    db.session.delete(comment)
-    db.session.commit()
-    return render_template('posts.html',message= "Comment deleted successfully"), 200
-
         
 

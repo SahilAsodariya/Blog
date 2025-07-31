@@ -94,6 +94,7 @@ def update_post(post_id):
     return render_template('edit_post.html', post=post)
 
 @post_bp.route('/delete/<int:post_id>', methods=['GET','POST','DELETE'])
+@jwt_required()
 def delete_post(post_id):
     post = Post.query.get(post_id)
     if not post:
@@ -101,4 +102,4 @@ def delete_post(post_id):
     
     db.session.delete(post)
     db.session.commit()
-    return render_template('posts.html', message='Post deleted successfully'), 200
+    return  jsonify({"message":'Post deleted successfully'}), 200
