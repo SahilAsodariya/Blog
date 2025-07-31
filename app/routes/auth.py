@@ -5,6 +5,7 @@ from ..extensions import db
 from ..validation import is_valid_password
 from ..schema.schema import UserSchema
 from flask_jwt_extended import create_access_token,jwt_required
+from email_validator import validate_email, EmailNotValidError
 
 
 auth_bp = Blueprint('auth',__name__)
@@ -55,20 +56,25 @@ def register():
             email = request.form.get('email')
             password = request.form.get('password')
              
-        
+        try:
+            valid = validate_email(data['email'])  # it will throw if invalid
+            valid_email = valid.email
+        except EmailNotValidError as e:
+            return jsonify({"message": str(e)}), 400
+                
         is_valid, message = is_valid_password(password)
         
         if not is_valid:
-            return render_template('register.html', message=message)
+            return jsonify({"message":message}),400
         
         registered_email = User.query.filter_by(email=email).first()
         if registered_email:
             return {"message": "Email already registered"}, 400
         else:
             hased_password = generate_password_hash(password)
-            new_user = User(username=name, email=email, password=hased_password)
+            new_user = User(username=name, email=valid_email, password=hased_password)
             db.session.add(new_user)
             db.session.commit()
-            return  {"message" : "Registration successful, please login."}
+            return  jsonify({"message" : "Registration successful, please login."})
     return render_template('register.html')
             
