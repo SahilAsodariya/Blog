@@ -1,239 +1,216 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>All Blog Posts</title>
-    <!-- Link to external CSS file -->
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/posts.css') }}"
-    />
-  </head>
 
-  <body>
-    <div class="container">
-      <header class="header">
-        <h1>📝 All Blog Posts</h1>
+<head>
+  <meta charset="UTF-8" />
+  <title>All Blog Posts</title>
+  <!-- Link to external CSS file -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/posts.css') }}" />
+</head>
 
-        <div class="actions">
-          <!-- Shown only when logged in -->
-          <div style="display: flex; align-items: center">
-            <input
-              type="checkbox"
-              id="my_post"
-              onchange="func()"
-              style="display: none"
-            />
-            <p id="my_post_label" style="display: none">Only see my posts</p>
-          </div>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>📝 All Blog Posts</h1>
 
-          <!-- Button to create new post -->
-          <button
-            id="create-post-btn"
-            class="btn primary"
-            onclick="goToCreatePost()"
-            style="display: none"
-          >
-            + Create New Post
-          </button>
-
-          <!-- Admin-only: Link to admin user list -->
-          <button
-            id="user-btn"
-            class="btn user"
-            onclick="goToAdminDashboard()"
-            style="display: none"
-          >
-            All Users
-          </button>
-
-          <!-- Logout button -->
-          <button
-            id="logout-btn"
-            class="btn danger"
-            onclick="logout()"
-            style="display: none"
-          >
-            Logout
-          </button>
-
-          <!-- Shown only when NOT logged in -->
-          <button
-            id="login-btn"
-            class="btn primary"
-            onclick="goToLogin()"
-            style="display: none"
-          >
-            Login
-          </button>
-          <button
-            id="register-btn"
-            class="btn register"
-            onclick="goToRegister()"
-            style="display: none"
-          >
-            Register
-          </button>
+      <div class="actions">
+        <!-- Shown only when logged in -->
+        <div style="display: flex; align-items: center">
+          <input type="checkbox" id="my_post" onchange="func()" style="display: none" />
+          <p id="my_post_label" style="display: none">Only see my posts</p>
         </div>
-      </header>
 
-      <!-- Container for blog posts -->
-      <div id="posts-container" class="posts-container"></div>
+        <!-- Button to create new post -->
+        <button id="create-post-btn" class="btn primary" onclick="goToCreatePost()" style="display: none">
+          + Create New Post
+        </button>
+
+        <!-- Admin-only: Link to admin user list -->
+        <button id="user-btn" class="btn user" onclick="goToAdminDashboard()" style="display: none">
+          All Users
+        </button>
+
+        <!-- Logout button -->
+        <button id="logout-btn" class="btn danger" onclick="logout()" style="display: none">
+          Logout
+        </button>
+
+        <!-- Shown only when NOT logged in -->
+        <button id="login-btn" class="btn primary" onclick="goToLogin()" style="display: none">
+          Login
+        </button>
+        <button id="register-btn" class="btn register" onclick="goToRegister()" style="display: none">
+          Register
+        </button>
+      </div>
+    </header>
+    <div class="search-container">
+      <input type="search" name="search" class="search" placeholder="search">
     </div>
 
-    <script>
-      const token = localStorage.getItem("access_token"); // Get stored token
-      const userId = localStorage.getItem("user_id"); // Get current user id
-      let is_admin = false; // Flag to check if current user is admin
+    <!-- Container for blog posts -->
+    <div id="posts-container" class="posts-container"></div>
+    <div class="page-container"></div>
+  </div>
+  </div>
 
-      // Handle comment form submission
-      function submitComment(e, postId) {
-        e.preventDefault();
+  <script>
+    const token = localStorage.getItem("access_token"); // Get stored token
+    const userId = localStorage.getItem("user_id"); // Get current user id
+    let is_admin = false; // Flag to check if current user is admin
+    const search = document.querySelector('.search')
+    let search_val = search.value.trim()
 
-        const input = document.getElementById(`comment-input-${postId}`);
-        const content = input.value.trim();
-        if (!content) return false;
 
-        // Call backend API to add comment
-        fetch(`/comment/add_comment/${postId}`, {
-          method: "POST",
-          headers: {
-            "Content-type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ content }),
+
+    // Handle comment form submission
+    function submitComment(e, postId) {
+      e.preventDefault();
+
+      const input = document.getElementById(`comment-input-${postId}`);
+      const content = input.value.trim();
+      if (!content) return false;
+
+      // Call backend API to add comment
+      fetch(`/comment/add_comment/${postId}`, {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ content }),
+      })
+        .then((res) => {
+          if (res.ok) {
+            return res.json();
+          } else {
+            throw new Error("Failed to add comment");
+          }
         })
-          .then((res) => {
-            if (res.ok) {
-              return res.json();
-            } else {
-              throw new Error("Failed to add comment");
-            }
-          })
-          .then((input.value = ""), func()) // Clear input and refresh posts
-          .catch((err) => {
-            alert("Could not post comment.");
-          });
+        .then((input.value = ""), func()) // Clear input and refresh posts
+        .catch((err) => {
+          alert("Could not post comment.");
+        });
 
-        return false;
-      }
+      return false;
+    }
 
-      // Show/hide buttons based on login state
-      if (token) {
-        document.getElementById("my_post_label").style.display = "inline-block";
-        document.getElementById("my_post").style.display = "inline-block";
-        document.getElementById("create-post-btn").style.display =
-          "inline-block";
-        document.getElementById("logout-btn").style.display = "inline-block";
-      } else {
-        document.getElementById("login-btn").style.display = "inline-block";
-        document.getElementById("register-btn").style.display = "inline-block";
-      }
+    // Show/hide buttons based on login state
+    if (token) {
+      document.getElementById("my_post_label").style.display = "inline-block";
+      document.getElementById("my_post").style.display = "inline-block";
+      document.getElementById("create-post-btn").style.display =
+        "inline-block";
+      document.getElementById("logout-btn").style.display = "inline-block";
+    } else {
+      document.getElementById("login-btn").style.display = "inline-block";
+      document.getElementById("register-btn").style.display = "inline-block";
+    }
 
-      // Main function to load and display posts
-      const func = async () => {
-        const cheackboxVal = document.getElementById("my_post");
+    // Main function to load and display posts
+    const func = async (page) => {
+      const search = document.querySelector('.search')
+      let search_val = search.value.trim()
 
-        fetch("/post/", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            // Check if user is admin
-            if (userId == data.admin) {
-              is_admin = true;
-            }
+      fetch(`/post?page=${page}&limit=10&search=${search_val}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          const cheackboxVal = document.getElementById("my_post");
 
-            // Show user management button if admin
-            if (token && is_admin) {
-              document.getElementById("user-btn").style.display =
-                "inline-block";
-            }
+          // Check if user is admin
+          if (userId == data.admin) {
+            is_admin = true;
+          }
 
-            const container = document.getElementById("posts-container");
-            container.innerHTML = "";
+          // Show user management button if admin
+          if (token && is_admin) {
+            document.getElementById("user-btn").style.display =
+              "inline-block";
+          }
 
-            // Render each post
-            if (data.posts && data.posts.length > 0) {
-              data.posts.forEach((post) => {
-                // Skip posts not belonging to current user if filter is on
-                if (cheackboxVal.checked && post.user_id != userId) {
-                  return;
-                }
+          // for pagination add page in page conatainer
 
-                const div = document.createElement("div");
-                div.classList.add("post-card");
+          let totalPages = data.pagination.total_pages
+          let currentPage = data.pagination.current_page
+          renderPagination(currentPage, totalPages)
 
-                div.innerHTML = `
+          const container = document.getElementById("posts-container");
+          container.innerHTML = "";
+
+          // Render each post
+          if (data.posts && data.posts.length > 0) {
+            data.posts.forEach((post) => {
+              // Skip posts not belonging to current user if filter is on
+              if (cheackboxVal.checked && post.user_id != userId) {
+                return;
+              }
+
+              const div = document.createElement("div");
+              div.classList.add("post-card");
+
+              div.innerHTML = `
                               <div>
                                   <h2>${post.title}</h2>
-                                  <p class="meta">By User: <strong> ${
-                                    post.username
-                                  } </strong>  • Posted on  ${
-                  post.created_at
+                                  <p class="meta">By User: <strong> ${post.username
+                } </strong>  • Posted on  ${post.created_at
                 }</p>
                                   <p class="content">${post.content}</p>
                               </div>
                               <div class="actions">
-                                  ${
-                                    token && userId == post.user_id
-                                      ? `<a href="/post/edit-page/${post.id}" class="btn primary">Edit</a>`
-                                      : ""
-                                  }
-                                  ${
-                                    (token && userId == post.user_id) ||
-                                    is_admin
-                                      ? `<a onclick="deletePost(${post.id})" class="btn danger">Delete</a>`
-                                      : ""
-                                  }
+                                  ${token && userId == post.user_id
+                  ? `<a href="/post/edit-page/${post.id}" class="btn primary">Edit</a>`
+                  : ""
+                }
+                                  ${(token && userId == post.user_id) ||
+                  is_admin
+                  ? `<a onclick="deletePost(${post.id})" class="btn danger">Delete</a>`
+                  : ""
+                }
                               </div>
 
                               <!-- Comment Section -->
                               <div class="comments-section">
                                 <h4>💬 Comments</h4>
-                                <div class="comments-list" id="comments-${
-                                  post.id
-                                }">
-                                 ${
-                                   post.comments && post.comments.length > 0
-                                     ? post.comments
-                                         .map(
-                                           (comment) => `
+                                <div class="comments-list" id="comments-${post.id
+                }">
+                                 ${post.comments && post.comments.length > 0
+                  ? post.comments
+                    .map(
+                      (comment) => `
                                    <div class="comment">
                                     <div style="flex: 12;">
-                                      <p><strong>${
-                                        comment.user.username
-                                      }:</strong> &nbsp; ${comment.content}</p>
+                                      <p><strong>${comment.user.username
+                        }:</strong> &nbsp; ${comment.content}</p>
                                       <p class="meta">${new Date(
-                                        comment.created_at
-                                      ).toLocaleString()}</p>
+                          comment.created_at
+                        ).toLocaleString()}</p>
                                     </div>
                                   <div style="flex: 1;">
-                                    ${
-                                      is_admin
-                                        ? `<a
+                                    ${is_admin
+                          ? `<a
                             onclick="deleteComment(${comment.id})"
                             class="btn danger"
                           >
                             Delete
                           </a>`
-                                        : ""
-                                    }
+                          : ""
+                        }
                                     </div>
                                     </div>`
-                                         )
-                                         .join("")
-                                     : `<p class="no-comments">No comments yet.</p>`
-                                 }
+                    )
+                    .join("")
+                  : `<p class="no-comments">No comments yet.</p>`
+                }
                                 </div>
 
                                 <!-- If logged in, show comment input -->
-                                ${
-                                  token
-                                    ? `
+                                ${token
+                  ? `
                                 <form class="comment-form" onsubmit="submitComment(event, ${post.id})">
                                   <input
                                     type="text" 
@@ -244,107 +221,168 @@
                                   />
                                   <button type="submit" class="btn small">Post</button>
                                 </form>`
-                                    : `<p class="comment-login-msg">Login to comment</p>`
-                                }
+                  : `<p class="comment-login-msg">Login to comment</p>`
+                }
                               </div>
                             `;
 
-                container.appendChild(div);
-              });
-            } else {
-              container.innerHTML = `<p class="no-posts">No posts available.</p>`;
-            }
+              container.appendChild(div);
+            });
+          } else {
+            container.innerHTML = `<p class="no-posts">No posts available.</p>`;
+          }
 
-            // If nothing rendered, show fallback message
-            if (container.childNodes.length == 0) {
-              container.innerHTML = `<p class="no-posts">No posts available.</p>`;
-            }
-          })
-          .catch((error) => {
-            console.error("Error loading posts:", error);
-            document.getElementById(
-              "posts-container"
-            ).innerHTML = `<p style="color:red;">Unable to fetch posts.</p>`;
-          });
-      };
-
-      // Delete Comment function
-      const deleteComment = (commentId) => {
-        fetch(`/admin/comment_delete/${commentId}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+          // If nothing rendered, show fallback message
+          if (container.childNodes.length == 0) {
+            container.innerHTML = `<p class="no-posts">No posts available.</p>`;
+          }
         })
-          .then((res) => {
-            if (res.ok) {
-              return res.json();
-            } else {
-              throw new Error("Failed to delete comment");
-            }
-          })
-          .then((data) => {
-            alert(data.message);
-            func();
-          })
-          .catch((error) => {
-            alert("error:", error);
-          });
-      };
+        .catch((error) => {
+          console.error("Error loading posts:", error);
+          document.getElementById(
+            "posts-container"
+          ).innerHTML = `<p style="color:red;">Unable to fetch posts.</p>`;
+        });
 
-      //Delete Post function
+    };
 
-      // Delete Comment function
-      const deletePost = (postId) => {
-        fetch(`/post/delete/${postId}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+    document.querySelector('.search').addEventListener('input', function (e) {
+      func(1)
+    })  
+
+    // Delete Comment function
+    const deleteComment = (commentId) => {
+      fetch(`/admin/comment_delete/${commentId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((res) => {
+          if (res.ok) {
+            return res.json();
+          } else {
+            throw new Error("Failed to delete comment");
+          }
         })
-          .then((res) => {
-            if (res.ok) {
-              return res.json();
-            } else {
-              throw new Error("Failed to delete post");
-            }
-          })
-          .then((data) => {
-            alert(data.message);
-            func();
-          })
-          .catch((error) => {
-            alert("error:", error);
-          });
-      };
+        .then((data) => {
+          alert(data.message);
+          func();
+        })
+        .catch((error) => {
+          alert("error:", error);
+        });
+    };
 
-      // Navigation function
-      function goToLogin() {
-        window.location.href = "/auth/login"; // adjust to your login route
+    //Delete Post function
+
+    // Delete Comment function
+    const deletePost = (postId) => {
+      fetch(`/post/delete/${postId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((res) => {
+          if (res.ok) {
+            return res.json();
+          } else {
+            throw new Error("Failed to delete post");
+          }
+        })
+        .then((data) => {
+          alert(data.message);
+          func();
+        })
+        .catch((error) => {
+          alert("error:", error);
+        });
+    };
+
+    // Navigation function
+    function goToLogin() {
+      window.location.href = "/auth/login"; // adjust to your login route
+    }
+
+    function goToRegister() {
+      window.location.href = "/auth/register"; // adjust to your register route
+    }
+
+    function goToCreatePost() {
+      window.location.href = "/post/create-page"; // adjust to your create post route
+    }
+    function goToAdminDashboard() {
+      window.location.href = "/admin/only_admin"; // adjust to your admin dashboard route
+    }
+
+    function renderPagination(currentPage, totalPages) {
+      const pageContainer = document.querySelector('.page-container');
+      pageContainer.innerHTML = '';
+
+      const maxVisiblePages = 5; // Show only 5 pages max around current
+      const half = Math.floor(maxVisiblePages / 2);
+
+      let start = Math.max(1, currentPage - half);
+      let end = Math.min(totalPages, currentPage + half);
+
+      if (end - start < maxVisiblePages - 1) {
+        if (start === 1) {
+          end = Math.min(start + maxVisiblePages - 1, totalPages);
+        } else if (end === totalPages) {
+          start = Math.max(end - maxVisiblePages + 1, 1);
+        }
       }
 
-      function goToRegister() {
-        window.location.href = "/auth/register"; // adjust to your register route
+      // First << button
+      if (currentPage > 1) {
+        addPageButton('<<', 1);
+        addPageButton('<', currentPage - 1);
       }
 
-      function goToCreatePost() {
-        window.location.href = "/post/create-page"; // adjust to your create post route
-      }
-      function goToAdminDashboard() {
-        window.location.href = "/admin/only_admin"; // adjust to your admin dashboard route
-      }
-
-      // Logout function
-      function logout() {
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("user_id");
-        window.location.href = "/";
+      // Number buttons
+      for (let i = start; i <= end; i++) {
+        const btn = document.createElement('div');
+        btn.className = 'page';
+        btn.textContent = i;
+        if (i === currentPage) {
+          btn.classList.add('active'); // highlight current page
+        }
+        btn.addEventListener('click', () => func(i));
+        pageContainer.appendChild(btn);
       }
 
-      // Initial call to load posts
-      func();
-    </script>
-  </body>
+      // Last >> button
+      if (currentPage < totalPages) {
+        addPageButton('>', currentPage + 1);
+        addPageButton('>>', totalPages);
+      }
+
+      function addPageButton(text, page) {
+        const btn = document.createElement('div');
+        btn.className = 'page nav';
+        btn.textContent = text;
+        btn.addEventListener('click', () => func(page));
+        pageContainer.appendChild(btn);
+      }
+    }
+
+
+
+    // Logout function
+    function logout() {
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("user_id");
+      window.location.href = "/";
+    }
+
+
+    // Initial call to load posts
+    func(1);
+
+  </script>
+</body>
+
 </html>

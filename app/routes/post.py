@@ -3,6 +3,7 @@ from ..models import Post, User
 from ..extensions import db
 from ..schema.schema import PostSchema, CommentSchema
 from datetime import datetime, timedelta
+from sqlalchemy import func
 
 def get_ist_time():
     return datetime.utcnow() + timedelta(hours=5, minutes=30)
@@ -18,14 +19,28 @@ comments_schema = CommentSchema(many=True)
 
 @post_bp.route('/', methods=['GET'])
 def get_posts():
-    posts = Post.query.all()
+    # Get query params with default values
+    page = request.args.get('page', 1, type=int)
+    limit = request.args.get('limit', 10, type=int)
+    search = request.args.get('search', '', type=str)
+
+    # Paginate query
+    
+    if search:
+        pagination = Post.query.filter(
+        func.lower(Post.content).like(f'%{search}%')
+        ).order_by(Post.created_at.desc()).paginate(page=page, per_page=limit)
+    else:
+        pagination = Post.query.order_by(Post.created_at.desc()).paginate(page=page, per_page=limit)
+        
+    
     admin = 0
     admin_users = User.query.filter_by(is_admin=True).first()
     if admin_users:
         admin = admin_users.id
 
     post_list = []
-    for post in posts:
+    for post in pagination.items:
         post_list.append({
             "id": post.id,
             "title": post.title,
@@ -35,7 +50,17 @@ def get_posts():
             "username": post.user.username,
             "comments": comments_schema.dump(post.comments) if post.comments else [],
         })
-    return jsonify({"posts": post_list, "admin": admin}), 200  
+    return jsonify({
+        "posts": post_list,
+        "admin": admin,
+        "pagination": {
+            "total_posts": pagination.total,
+            "total_pages": pagination.pages,
+            "current_page": pagination.page,
+            "has_next": pagination.has_next,
+            "has_prev": pagination.has_prev,
+        }
+    }), 200  
 
 @post_bp.route('/create-page', methods=['GET'])
 def create_post_page():
