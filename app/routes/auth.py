@@ -6,6 +6,7 @@ from ..validation import is_valid_password
 from ..schema.schema import UserSchema
 from flask_jwt_extended import create_access_token,jwt_required
 from email_validator import validate_email, EmailNotValidError
+from ..utils.email_utils import send_email
 
 
 auth_bp = Blueprint('auth',__name__)
@@ -49,7 +50,6 @@ def register():
             name = data.get('name')
             email = data.get('email')
             password = data.get('password')
-            
             
         else:
             name = request.form.get('name')
