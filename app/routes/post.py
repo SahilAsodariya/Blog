@@ -1,9 +1,18 @@
-from flask import Blueprint, request, render_template,jsonify
+from flask import Blueprint, request, render_template,jsonify, current_app
+import os
+from werkzeug.utils import secure_filename
 from ..models import Post, User
 from ..extensions import db
 from ..schema.schema import PostSchema, CommentSchema
 from datetime import datetime, timedelta
 from sqlalchemy import func
+
+
+# Allowed file extensions
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'pdf'}
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 def get_ist_time():
     return datetime.utcnow() + timedelta(hours=5, minutes=30)
@@ -46,6 +55,7 @@ def get_posts():
             "title": post.title,
             "content": post.content,
             "created_at": post.created_at,
+            "file" : post.file,
             "user_id": post.user_id,
             "username": post.user.username,
             "comments": comments_schema.dump(post.comments) if post.comments else [],
@@ -69,22 +79,42 @@ def create_post_page():
 @post_bp.route('/create/', methods=['POST'])
 @jwt_required()
 def create_post():
+    app = current_app
+    
     if request.method == 'POST':
+        # Default values
+        filename = None
+
+        user_id = get_jwt_identity()
+
         if request.is_json:
             data = request.get_json()
-            user_id = get_jwt_identity()
             title = data.get('title')
             content = data.get('content')
         else:
-            user_id = get_jwt_identity()
             title = request.form.get('title')
             content = request.form.get('content')
-            
-        post = Post(title=title, content=content, user_id=user_id)
+            file = request.files.get('file')
+            print(file)
+
+            # Handle file upload if file is provided and valid
+            if file and file.filename != '' and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                # Make sure folder exists
+                os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
+                file.save(filepath)
+
+        # Create and save post
+        post = Post(title=title, content=content, user_id=user_id, file=filename)
         db.session.add(post)
         db.session.commit()
-        return {'massage' : 'Post create successfully'}, 201
+
+        return {'message': 'Post created successfully'}, 201
+
     return render_template('create_post.html')
+
 
 
 @post_bp.route('edit-page/<int:post_id>', methods=['GET'])

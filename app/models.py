@@ -21,6 +21,7 @@ class Post(db.Model):
     content = db.Column(db.Text, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=get_ist_time)
+    file = db.Column(db.String(255))
 
     comments = db.relationship('Comment', backref='post', lazy=True, cascade='all, delete')
 

@@ -75,6 +75,27 @@ def register():
             new_user = User(username=name, email=valid_email, password=hased_password)
             db.session.add(new_user)
             db.session.commit()
+            send_email(
+                subject= "Welcome to our website",
+                recipients=[f"{valid_email}"],
+                body=f"""Hi {name},
+
+                    Welcome to out blog! 🎉  
+                    We’re excited to have you on board.
+
+                    Here, you’ll find a variety of interesting and informative blog posts shared by passionate writers like you. You can:
+                    - Discover new articles
+                    - Share your own thoughts
+                    - Leave comments and interact with others
+
+                    👉 To get started, simply log in and explore the latest posts.
+
+                    If you have any questions or feedback, feel free to reply to this email.
+
+                    Happy reading & writing!  
+                    — The blog Team
+                    """
+            )
             return  jsonify({"message" : "Registration successful, please login."})
     return render_template('register.html')
             

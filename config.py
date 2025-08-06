@@ -8,9 +8,8 @@ class Config:
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
     JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
     DEBUG = os.getenv("DEBUG", "False") == "True"
+    UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER')
     
-# config.py
-class Config:
     # Gmail SMTP configuration
     MAIL_SERVER = os.getenv('MAIL_SERVER')
     MAIL_PORT = os.getenv('MAIL_PORT')
