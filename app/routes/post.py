@@ -6,6 +6,8 @@ from ..extensions import db
 from ..schema.schema import PostSchema, CommentSchema
 from datetime import datetime, timedelta
 from sqlalchemy import func
+from ..utils.image_compres_utils import compress_image
+
 
 
 # Allowed file extensions
@@ -79,8 +81,6 @@ def create_post_page():
 @post_bp.route('/create/', methods=['POST'])
 @jwt_required()
 def create_post():
-    app = current_app
-    
     if request.method == 'POST':
         # Default values
         filename = None
@@ -95,16 +95,10 @@ def create_post():
             title = request.form.get('title')
             content = request.form.get('content')
             file = request.files.get('file')
-            print(file)
 
             # Handle file upload if file is provided and valid
             if file and file.filename != '' and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                # Make sure folder exists
-                os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-
-                file.save(filepath)
+                compress_image(file)
 
         # Create and save post
         post = Post(title=title, content=content, user_id=user_id, file=filename)
@@ -130,6 +124,7 @@ def update_post(post_id):
     if not post:
         return jsonify('Post is not available'), 404
     
+    filename = None
     if request.method == 'POST' or request.method == 'PUT':
         if request.is_json:
             data = request.get_json()
@@ -139,6 +134,12 @@ def update_post(post_id):
         else:
             title = request.form.get('title')
             content = request.form.get('content')
+            file = request.files.get('file')
+            
+            #Handle file upload if file is provided and valid
+            if file and file.filename != '' and allowed_file(file.filename):
+                file_name = compress_image(file)
+                post.file = file_name
             
             
         post.title = title

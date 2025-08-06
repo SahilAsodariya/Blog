@@ -3,7 +3,7 @@ from PIL import Image
 import os
 from werkzeug.utils import secure_filename
 
-UPLOAD_FOLDER = 'static/uploads'
+UPLOAD_FOLDER = 'app/static/uploads'
 
 def compress_image(image_file, output_size=(800, 800), quality=70):
     filename = secure_filename(image_file.filename)
