@@ -98,7 +98,7 @@ def create_post():
 
             # Handle file upload if file is provided and valid
             if file and file.filename != '' and allowed_file(file.filename):
-                compress_image(file)
+                filename = compress_image(file)
 
         # Create and save post
         post = Post(title=title, content=content, user_id=user_id, file=filename)
