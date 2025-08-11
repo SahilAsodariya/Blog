@@ -13,34 +13,6 @@ from datetime import timedelta
 auth_bp = Blueprint('auth',__name__)
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
-
-@auth_bp.route('/')
-def hero():
-    return render_template('login.html')
-
-@auth_bp.route('login/', methods=['GET','POST'])
-def login():
-    if request.method == "POST":
-        if request.is_json:
-            data = request.get_json()
-            email = data.get('email')
-            password = data.get('password')
-        else:
-            email = request.form.get('email')
-            password = request.form.get('password')
-
-        is_valid, message = is_valid_password(password)
-        
-        if not is_valid:
-            return render_template('login.html', message=message)
-    
-        user = User.query.filter_by(email=email).first()
-        if user and check_password_hash(user.password, password):
-            access_token = create_access_token(identity=str(user.id))
-            return  {"access_token" : access_token , "user_id":user.id}
-        else:
-            return {"message": "Invalid email or password"}, 401
-    return render_template('login.html')
         
         
 @auth_bp.route('register/', methods=['GET','POST'])
@@ -95,12 +67,50 @@ def register():
 
                     Happy reading & writing!  
                     — The blog Team
-                    """
+                    """,
+                    html=''
             )
-            return  jsonify({"message" : "Registration successful, please login."})
+            return  jsonify({"message" : "Registration successful, please login."}), 200
     return render_template('register.html')
 
+
+@auth_bp.route('/')
+def hero():
+    return render_template('login.html')
+
+
+@auth_bp.route('login/', methods=['GET','POST'])
+@auth_bp.route('/login/', methods=['GET', 'POST'])
+def login():
+    if request.method == "POST":
+        if request.is_json:
+            data = request.get_json()
+            email = data.get('email')
+            password = data.get('password')
+        else:
+            email = request.form.get('email')
+            password = request.form.get('password')
+
+        is_valid, message = is_valid_password(password)
+        
+        if not is_valid:
+            if request.is_json:
+                return jsonify({'message': message}), 401
+            else:
+                return render_template('login.html', message=message)
+    
+        user = User.query.filter_by(email=email).first()
+        if user and check_password_hash(user.password, password):
+            access_token = create_access_token(identity=str(user.id))
+            return jsonify({
+                "access_token": access_token,
+                "user_id": user.id
+            }), 200
+        else:
             
+            return jsonify({"message": "Invalid email or password"}), 401
+    return render_template('login.html')
+
 # route: /reset-password-request
 @auth_bp.route('/reset-password-request', methods=['GET', 'POST'])
 def reset_password_request():

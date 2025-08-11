@@ -105,7 +105,7 @@ def create_post():
         db.session.add(post)
         db.session.commit()
 
-        return {'message': 'Post created successfully'}, 201
+        return jsonify({'message': 'Post created successfully'}), 201
 
     return render_template('create_post.html')
 
