@@ -4,7 +4,8 @@ from .routes.auth import auth_bp
 from .routes.post import post_bp
 from .routes.First_page import bp as first_page_bp
 from .routes.comment import comment_bp 
-from .routes.admin import admin_bp 
+from .routes.admin import admin_bp
+from . import socket_event
 
 def create_app(config = "config.Config"):
     app = Flask(__name__)
@@ -14,7 +15,7 @@ def create_app(config = "config.Config"):
     migrate.init_app(app,db)
     jwt.init_app(app)
     mail.init_app(app)
-    socketio.init_app(app, cors_allowed_origins="*")
+    socketio.init_app(app)
     
     app.register_blueprint(auth_bp, url_prefix="/auth/")
     app.register_blueprint(post_bp, url_prefix="/post/")

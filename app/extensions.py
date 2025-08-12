@@ -10,4 +10,5 @@ db = SQLAlchemy()
 migrate = Migrate()
 jwt = JWTManager()
 mail = Mail()
-socketio = SocketIO()
+socketio = SocketIO(cors_allowed_origins="*")
+online_users = {}

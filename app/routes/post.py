@@ -87,6 +87,8 @@ def create_post():
         filename = None
 
         user_id = get_jwt_identity()
+        user = User.query.filter_by(id=user_id).first()
+        username = user.username
 
         if request.is_json:
             data = request.get_json()
@@ -108,7 +110,7 @@ def create_post():
         
         socketio.emit(
         'notification',
-        {'message': f"📢 New post created: {title}"},
+        {'message': f"📢 {username} created new post: {title}"},
         to=None
     )
 

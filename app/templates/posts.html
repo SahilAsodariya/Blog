@@ -1,289 +1,358 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>All Blog Posts</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/posts.css') }}" />
-  <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
-
-</head>
-<body>
-  <div class="container">
-    <header class="header">
-      <h1>📝 All Blog Posts</h1>
-      <div class="actions">
-        <div class="my-posts-toggle" style="display: flex; align-items: center">
-          <input type="checkbox" id="my_post" onchange="func()" style="display: none" />
-          <label for="my_post" id="my_post_label" style="display: none">Only see my posts</label>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>All Blog Posts</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/posts.css') }}"
+    />
+    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <h1>📝 All Blog Posts</h1>
+        <div class="actions">
+          <div
+            class="my-posts-toggle"
+            style="display: flex; align-items: center"
+          >
+            <input
+              type="checkbox"
+              id="my_post"
+              onchange="func()"
+              style="display: none"
+            />
+            <label for="my_post" id="my_post_label" style="display: none"
+              >Only see my posts</label
+            >
+          </div>
+          <button
+            id="create-post-btn"
+            class="btn btn-primary"
+            onclick="goToCreatePost()"
+            style="display: none"
+          >
+            + Create New Post
+          </button>
+          <button
+            id="user-btn"
+            class="btn btn-secondary"
+            onclick="goToAdminDashboard()"
+            style="display: none"
+          >
+            All Users
+          </button>
+          <button
+            id="logout-btn"
+            class="btn btn-danger"
+            onclick="logout()"
+            style="display: none"
+          >
+            Logout
+          </button>
+          <button
+            id="login-btn"
+            class="btn btn-primary"
+            onclick="goToLogin()"
+            style="display: none"
+          >
+            Login
+          </button>
+          <button
+            id="register-btn"
+            class="btn btn-secondary"
+            onclick="goToRegister()"
+            style="display: none"
+          >
+            Register
+          </button>
         </div>
-        <button id="create-post-btn" class="btn btn-primary" onclick="goToCreatePost()" style="display: none">
-          + Create New Post
-        </button>
-        <button id="user-btn" class="btn btn-secondary" onclick="goToAdminDashboard()" style="display: none">
-          All Users
-        </button>
-        <button id="logout-btn" class="btn btn-danger" onclick="logout()" style="display: none">
-          Logout
-        </button>
-        <button id="login-btn" class="btn btn-primary" onclick="goToLogin()" style="display: none">
-          Login
-        </button>
-        <button id="register-btn" class="btn btn-secondary" onclick="goToRegister()" style="display: none">
-          Register
-        </button>
+      </header>
+      <div class="search-container">
+        <input
+          type="search"
+          name="search"
+          class="search"
+          placeholder="Search posts..."
+        />
       </div>
-    </header>
-    <div class="search-container">
-      <input type="search" name="search" class="search" placeholder="Search posts..." />
+      <div id="posts-container" class="posts-container"></div>
+      <div class="page-container"></div>
     </div>
-    <div id="posts-container" class="posts-container"></div>
-    <div class="page-container"></div>
-  </div>
 
-  <script>
-    const socket = io();
+    <script>
+      const token = localStorage.getItem("access_token");
+      const userId = localStorage.getItem("user_id");
+      let is_admin = false;
 
-    socket.on('notification', function(data) {
+      const socket = io();
+      if (userId) {
+        socket.emit("register_user", {'user_id': userId });
+         socket.on('notification', function(data) {
         alert(data.message);
     });
-    const token = localStorage.getItem("access_token");
-    const userId = localStorage.getItem("user_id");
-    let is_admin = false;
+      }
 
-    if (token) {
-      document.getElementById("my_post_label").style.display = "inline-block";
-      document.getElementById("my_post").style.display = "inline-block";
-      document.getElementById("create-post-btn").style.display = "inline-block";
-      document.getElementById("logout-btn").style.display = "inline-block";
-    } else {
-      document.getElementById("login-btn").style.display = "inline-block";
-      document.getElementById("register-btn").style.display = "inline-block";
-    }
+        
 
-    const func = async (page = 1) => {
-      const search = document.querySelector(".search").value.trim();
-      const showMyPosts = document.getElementById("my_post").checked;
 
-      fetch(`/post?page=${page}&limit=10&search=${search}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (userId == data.admin) is_admin = true;
-          if (token && is_admin)
-            document.getElementById("user-btn").style.display = "inline-block";
+      if (token) {
+        document.getElementById("my_post_label").style.display = "inline-block";
+        document.getElementById("my_post").style.display = "inline-block";
+        document.getElementById("create-post-btn").style.display =
+          "inline-block";
+        document.getElementById("logout-btn").style.display = "inline-block";
+      } else {
+        document.getElementById("login-btn").style.display = "inline-block";
+        document.getElementById("register-btn").style.display = "inline-block";
+      }
 
-          renderPagination(data.pagination.current_page, data.pagination.total_pages);
+      const func = async (page = 1) => {
+        const search = document.querySelector(".search").value.trim();
+        const showMyPosts = document.getElementById("my_post").checked;
 
-          const container = document.getElementById("posts-container");
-          container.innerHTML = "";
+        fetch(`/post?page=${page}&limit=10&search=${search}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (userId == data.admin) is_admin = true;
+            if (token && is_admin)
+              document.getElementById("user-btn").style.display =
+                "inline-block";
 
-          if (!data.posts || data.posts.length === 0) {
-            container.innerHTML = `<p class="no-posts">No posts available.</p>`;
-            return;
-          }
+            renderPagination(
+              data.pagination.current_page,
+              data.pagination.total_pages
+            );
 
-          data.posts.forEach((post) => {
-            if (showMyPosts && post.user_id != userId) return;
+            const container = document.getElementById("posts-container");
+            container.innerHTML = "";
 
-            const hasImage = post.file && post.file.trim() !== "";
-            const postDiv = document.createElement("div");
-            postDiv.className = "post-card";
+            if (!data.posts || data.posts.length === 0) {
+              container.innerHTML = `<p class="no-posts">No posts available.</p>`;
+              return;
+            }
 
-            postDiv.innerHTML = `
+            data.posts.forEach((post) => {
+              if (showMyPosts && post.user_id != userId) return;
+
+              const hasImage = post.file && post.file.trim() !== "";
+              const postDiv = document.createElement("div");
+              postDiv.className = "post-card";
+
+              postDiv.innerHTML = `
             <div>
               <h2>${post.title}</h2>
-              <p class="meta">By <strong>${post.username}</strong> • Posted on ${post.created_at}</p>
-              <div class="content-img ${hasImage ? "side-by-side" : "text-only"}">
+              <p class="meta">By <strong>${
+                post.username
+              }</strong> • Posted on ${post.created_at}</p>
+              <div class="content-img ${
+                hasImage ? "side-by-side" : "text-only"
+              }">
                 <p class="content">${post.content}</p>
-                ${hasImage
-                ? `<img src="static/uploads/${post.file}" class="img" alt="Post Image" />`
-                : ""
-              }
+                ${
+                  hasImage
+                    ? `<img src="static/uploads/${post.file}" class="img" alt="Post Image" />`
+                    : ""
+                }
               </div>
             </div>
             <div class="actions">
-              ${token && userId == post.user_id
-                ? `<a href="/post/edit-page/${post.id}" class="btn btn-primary">Edit</a>`
-                : ""
+              ${
+                token && userId == post.user_id
+                  ? `<a href="/post/edit-page/${post.id}" class="btn btn-primary">Edit</a>`
+                  : ""
               }
-              ${(token && userId == post.user_id) || is_admin
-                ? `<a onclick="deletePost(${post.id})" class="btn btn-danger">Delete</a>`
-                : ""
+              ${
+                (token && userId == post.user_id) || is_admin
+                  ? `<a onclick="deletePost(${post.id})" class="btn btn-danger">Delete</a>`
+                  : ""
               }
             </div>
             <div class="comments-section">
               <h4>💬 Comments</h4>
               <div class="comments-list" id="comments-${post.id}">
-                ${post.comments && post.comments.length > 0
-                ? post.comments
-                  .map(
-                    (comment) => `
+                ${
+                  post.comments && post.comments.length > 0
+                    ? post.comments
+                        .map(
+                          (comment) => `
                             <div class="comment">
                               <div style="flex: 12;">
-                                <p><strong>${comment.user.username}:</strong> ${comment.content}</p>
-                                <p class="meta">${new Date(comment.created_at).toLocaleString()}</p>
+                                <p><strong>${comment.user.username}:</strong> ${
+                            comment.content
+                          }</p>
+                                <p class="meta">${new Date(
+                                  comment.created_at
+                                ).toLocaleString()}</p>
                               </div>
                               <div style="flex: 1;">
-                                ${is_admin
-                        ? `<a onclick="deleteComment(${comment.id})" class="btn btn-danger">Delete</a>`
-                        : ""
-                      }
+                                ${
+                                  is_admin
+                                    ? `<a onclick="deleteComment(${comment.id})" class="btn btn-danger">Delete</a>`
+                                    : ""
+                                }
                               </div>
                             </div>
                           `
-                  )
-                  .join("")
-                : `<p class="no-comments">No comments yet.</p>`
-              }
+                        )
+                        .join("")
+                    : `<p class="no-comments">No comments yet.</p>`
+                }
               </div>
-              ${token
-                ? `
+              ${
+                token
+                  ? `
                     <form class="comment-form" onsubmit="submitComment(event, ${post.id})">
                       <input type="text" class="comment-input" id="comment-input-${post.id}" placeholder="Write a comment..." required />
                       <button type="submit" class="btn btn-small">Post</button>
                     </form>
                   `
-                : `<p class="comment-login-msg">Login to comment</p>`
+                  : `<p class="comment-login-msg">Login to comment</p>`
               }
             </div>
           `;
 
-            container.appendChild(postDiv);
+              container.appendChild(postDiv);
+            });
+          })
+          .catch((err) => {
+            console.error("Error:", err);
+            document.getElementById("posts-container").innerHTML =
+              "<p style='color:red;'>Unable to fetch posts.</p>";
           });
+      };
+
+      const submitComment = (e, postId) => {
+        e.preventDefault();
+        const input = document.getElementById(`comment-input-${postId}`);
+        const content = input.value.trim();
+        if (!content) return;
+
+        fetch(`/comment/add_comment/${postId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ content }),
         })
-        .catch((err) => {
-          console.error("Error:", err);
-          document.getElementById("posts-container").innerHTML =
-            "<p style='color:red;'>Unable to fetch posts.</p>";
-        });
-    };
+          .then((res) => res.json())
+          .then(() => {
+            input.value = "";
+            func();
+          })
+          .catch(() => alert("Could not post comment."));
+      };
 
-    const submitComment = (e, postId) => {
-      e.preventDefault();
-      const input = document.getElementById(`comment-input-${postId}`);
-      const content = input.value.trim();
-      if (!content) return;
-
-      fetch(`/comment/add_comment/${postId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ content }),
-      })
-        .then((res) => res.json())
-        .then(() => {
-          input.value = "";
-          func();
+      const deletePost = (postId) => {
+        fetch(`/post/delete/${postId}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         })
-        .catch(() => alert("Could not post comment."));
-    };
+          .then((res) => res.json())
+          .then((data) => {
+            alert(data.message);
+            func();
+          })
+          .catch((err) => alert("Error deleting post."));
+      };
 
-    const deletePost = (postId) => {
-      fetch(`/post/delete/${postId}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          alert(data.message);
-          func();
+      const deleteComment = (commentId) => {
+        fetch(`/admin/comment_delete/${commentId}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         })
-        .catch((err) => alert("Error deleting post."));
-    };
+          .then((res) => res.json())
+          .then((data) => {
+            alert(data.message);
+            func();
+          })
+          .catch(() => alert("Error deleting comment."));
+      };
 
-    const deleteComment = (commentId) => {
-      fetch(`/admin/comment_delete/${commentId}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          alert(data.message);
-          func();
-        })
-        .catch(() => alert("Error deleting comment."));
-    };
+      document
+        .querySelector(".search")
+        .addEventListener("input", () => func(1));
 
-    document.querySelector(".search").addEventListener("input", () => func(1));
+      function renderPagination(currentPage, totalPages) {
+        const pageContainer = document.querySelector(".page-container");
+        pageContainer.innerHTML = "";
 
-    function renderPagination(currentPage, totalPages) {
-      const pageContainer = document.querySelector(".page-container");
-      pageContainer.innerHTML = "";
+        const maxPages = 5;
+        const half = Math.floor(maxPages / 2);
+        let start = Math.max(1, currentPage - half);
+        let end = Math.min(totalPages, currentPage + half);
 
-      const maxPages = 5;
-      const half = Math.floor(maxPages / 2);
-      let start = Math.max(1, currentPage - half);
-      let end = Math.min(totalPages, currentPage + half);
+        if (end - start < maxPages - 1) {
+          if (start === 1) end = Math.min(start + maxPages - 1, totalPages);
+          else if (end === totalPages) start = Math.max(end - maxPages + 1, 1);
+        }
 
-      if (end - start < maxPages - 1) {
-        if (start === 1) end = Math.min(start + maxPages - 1, totalPages);
-        else if (end === totalPages) start = Math.max(end - maxPages + 1, 1);
+        if (currentPage > 1) {
+          addButton("<<", 1);
+          addButton("<", currentPage - 1);
+        }
+
+        for (let i = start; i <= end; i++) {
+          const btn = document.createElement("div");
+          btn.className = "page";
+          if (i === currentPage) btn.classList.add("active");
+          btn.textContent = i;
+          btn.onclick = () => func(i);
+          pageContainer.appendChild(btn);
+        }
+
+        if (currentPage < totalPages) {
+          addButton(">", currentPage + 1);
+          addButton(">>", totalPages);
+        }
+
+        function addButton(text, page) {
+          const btn = document.createElement("div");
+          btn.className = "page nav";
+          btn.textContent = text;
+          btn.onclick = () => func(page);
+          pageContainer.appendChild(btn);
+        }
       }
 
-      if (currentPage > 1) {
-        addButton("<<", 1);
-        addButton("<", currentPage - 1);
+      function goToLogin() {
+        window.location.href = "/auth/login";
       }
 
-      for (let i = start; i <= end; i++) {
-        const btn = document.createElement("div");
-        btn.className = "page";
-        if (i === currentPage) btn.classList.add("active");
-        btn.textContent = i;
-        btn.onclick = () => func(i);
-        pageContainer.appendChild(btn);
+      function goToRegister() {
+        window.location.href = "/auth/register";
       }
 
-      if (currentPage < totalPages) {
-        addButton(">", currentPage + 1);
-        addButton(">>", totalPages);
+      function goToCreatePost() {
+        window.location.href = "/post/create-page";
       }
 
-      function addButton(text, page) {
-        const btn = document.createElement("div");
-        btn.className = "page nav";
-        btn.textContent = text;
-        btn.onclick = () => func(page);
-        pageContainer.appendChild(btn);
+      function goToAdminDashboard() {
+        window.location.href = "/admin/only_admin";
       }
-    }
 
-    function goToLogin() {
-      window.location.href = "/auth/login";
-    }
+      function logout() {
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("user_id");
+        window.location.href = "/";
+      }
 
-    function goToRegister() {
-      window.location.href = "/auth/register";
-    }
-
-    function goToCreatePost() {
-      window.location.href = "/post/create-page";
-    }
-
-    function goToAdminDashboard() {
-      window.location.href = "/admin/only_admin";
-    }
-
-    function logout() {
-      localStorage.removeItem("access_token");
-      localStorage.removeItem("user_id");
-      window.location.href = "/";
-    }
-
-    func(1);
-  </script>
-</body>
+      func(1);
+    </script>
+  </body>
 </html>
