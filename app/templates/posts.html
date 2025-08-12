@@ -1,65 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>All Blog Posts</title>
-  <!-- Link to external CSS file -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/posts.css') }}" />
-</head>
+  <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
 
+</head>
 <body>
   <div class="container">
     <header class="header">
       <h1>📝 All Blog Posts</h1>
-
       <div class="actions">
-        <!-- Shown only when logged in -->
-        <div style="display: flex; align-items: center">
+        <div class="my-posts-toggle" style="display: flex; align-items: center">
           <input type="checkbox" id="my_post" onchange="func()" style="display: none" />
-          <p id="my_post_label" style="display: none">Only see my posts</p>
+          <label for="my_post" id="my_post_label" style="display: none">Only see my posts</label>
         </div>
-
-        <!-- Button to create new post -->
-        <button id="create-post-btn" class="btn primary" onclick="goToCreatePost()" style="display: none">
+        <button id="create-post-btn" class="btn btn-primary" onclick="goToCreatePost()" style="display: none">
           + Create New Post
         </button>
-
-        <!-- Admin-only: Link to admin user list -->
-        <button id="user-btn" class="btn user" onclick="goToAdminDashboard()" style="display: none">
+        <button id="user-btn" class="btn btn-secondary" onclick="goToAdminDashboard()" style="display: none">
           All Users
         </button>
-
-        <!-- Logout button -->
-        <button id="logout-btn" class="btn danger" onclick="logout()" style="display: none">
+        <button id="logout-btn" class="btn btn-danger" onclick="logout()" style="display: none">
           Logout
         </button>
-
-        <!-- Shown only when NOT logged in -->
-        <button id="login-btn" class="btn primary" onclick="goToLogin()" style="display: none">
+        <button id="login-btn" class="btn btn-primary" onclick="goToLogin()" style="display: none">
           Login
         </button>
-        <button id="register-btn" class="btn register" onclick="goToRegister()" style="display: none">
+        <button id="register-btn" class="btn btn-secondary" onclick="goToRegister()" style="display: none">
           Register
         </button>
       </div>
     </header>
     <div class="search-container">
-      <input type="search" name="search" class="search" placeholder="search">
+      <input type="search" name="search" class="search" placeholder="Search posts..." />
     </div>
-
-    <!-- Container for blog posts -->
     <div id="posts-container" class="posts-container"></div>
     <div class="page-container"></div>
   </div>
-  </div>
 
   <script>
+    const socket = io();
+
+    socket.on('notification', function(data) {
+        alert(data.message);
+    });
     const token = localStorage.getItem("access_token");
     const userId = localStorage.getItem("user_id");
     let is_admin = false;
 
-    // Show/hide login/logout/register buttons
     if (token) {
       document.getElementById("my_post_label").style.display = "inline-block";
       document.getElementById("my_post").style.display = "inline-block";
@@ -70,7 +61,6 @@
       document.getElementById("register-btn").style.display = "inline-block";
     }
 
-    // Main function to load and render posts
     const func = async (page = 1) => {
       const search = document.querySelector(".search").value.trim();
       const showMyPosts = document.getElementById("my_post").checked;
@@ -107,28 +97,25 @@
             postDiv.innerHTML = `
             <div>
               <h2>${post.title}</h2>
-              <p class="meta">By User: <strong>${post.username}</strong> • Posted on ${post.created_at}</p>
-
+              <p class="meta">By <strong>${post.username}</strong> • Posted on ${post.created_at}</p>
               <div class="content-img ${hasImage ? "side-by-side" : "text-only"}">
                 <p class="content">${post.content}</p>
                 ${hasImage
-                ? `<img src="static/uploads/${post.file}" class="img" alt="Post Image">`
+                ? `<img src="static/uploads/${post.file}" class="img" alt="Post Image" />`
                 : ""
               }
               </div>
             </div>
-
             <div class="actions">
               ${token && userId == post.user_id
-                ? `<a href="/post/edit-page/${post.id}" class="btn primary">Edit</a>`
+                ? `<a href="/post/edit-page/${post.id}" class="btn btn-primary">Edit</a>`
                 : ""
               }
               ${(token && userId == post.user_id) || is_admin
-                ? `<a onclick="deletePost(${post.id})" class="btn danger">Delete</a>`
+                ? `<a onclick="deletePost(${post.id})" class="btn btn-danger">Delete</a>`
                 : ""
               }
             </div>
-
             <div class="comments-section">
               <h4>💬 Comments</h4>
               <div class="comments-list" id="comments-${post.id}">
@@ -143,7 +130,7 @@
                               </div>
                               <div style="flex: 1;">
                                 ${is_admin
-                        ? `<a onclick="deleteComment(${comment.id})" class="btn danger">Delete</a>`
+                        ? `<a onclick="deleteComment(${comment.id})" class="btn btn-danger">Delete</a>`
                         : ""
                       }
                               </div>
@@ -154,12 +141,11 @@
                 : `<p class="no-comments">No comments yet.</p>`
               }
               </div>
-
               ${token
                 ? `
                     <form class="comment-form" onsubmit="submitComment(event, ${post.id})">
                       <input type="text" class="comment-input" id="comment-input-${post.id}" placeholder="Write a comment..." required />
-                      <button type="submit" class="btn small">Post</button>
+                      <button type="submit" class="btn btn-small">Post</button>
                     </form>
                   `
                 : `<p class="comment-login-msg">Login to comment</p>`
@@ -177,10 +163,8 @@
         });
     };
 
-    // Submit Comment
     const submitComment = (e, postId) => {
       e.preventDefault();
-
       const input = document.getElementById(`comment-input-${postId}`);
       const content = input.value.trim();
       if (!content) return;
@@ -201,7 +185,6 @@
         .catch(() => alert("Could not post comment."));
     };
 
-    // Delete Post
     const deletePost = (postId) => {
       fetch(`/post/delete/${postId}`, {
         method: "DELETE",
@@ -218,7 +201,6 @@
         .catch((err) => alert("Error deleting post."));
     };
 
-    // Delete Comment
     const deleteComment = (commentId) => {
       fetch(`/admin/comment_delete/${commentId}`, {
         method: "DELETE",
@@ -235,10 +217,8 @@
         .catch(() => alert("Error deleting comment."));
     };
 
-    // Search event
     document.querySelector(".search").addEventListener("input", () => func(1));
 
-    // Pagination rendering
     function renderPagination(currentPage, totalPages) {
       const pageContainer = document.querySelector(".page-container");
       pageContainer.innerHTML = "";
@@ -281,7 +261,6 @@
       }
     }
 
-    // Navigation
     function goToLogin() {
       window.location.href = "/auth/login";
     }
@@ -304,10 +283,7 @@
       window.location.href = "/";
     }
 
-    // Load posts initially
     func(1);
   </script>
-
 </body>
-
 </html>

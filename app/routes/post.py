@@ -2,11 +2,12 @@ from flask import Blueprint, request, render_template,jsonify, current_app
 import os
 from werkzeug.utils import secure_filename
 from ..models import Post, User
-from ..extensions import db
+from ..extensions import db, socketio   
 from ..schema.schema import PostSchema, CommentSchema
 from datetime import datetime, timedelta
 from sqlalchemy import func
 from ..utils.image_compres_utils import compress_image
+from flask_socketio import emit
 
 
 
@@ -104,6 +105,12 @@ def create_post():
         post = Post(title=title, content=content, user_id=user_id, file=filename)
         db.session.add(post)
         db.session.commit()
+        
+        socketio.emit(
+        'notification',
+        {'message': f"📢 New post created: {title}"},
+        to=None
+    )
 
         return jsonify({'message': 'Post created successfully'}), 201
 

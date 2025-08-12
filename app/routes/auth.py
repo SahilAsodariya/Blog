@@ -1,13 +1,15 @@
 from flask import Blueprint, request,render_template, redirect, url_for, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from ..models import User
-from ..extensions import db
+from ..extensions import db,socketio
 from ..validation import is_valid_password
 from ..schema.schema import UserSchema
 from flask_jwt_extended import create_access_token,jwt_required, get_jwt_identity, decode_token
 from email_validator import validate_email, EmailNotValidError
 from ..utils.email_utils import send_email
 from datetime import timedelta
+
+
 
 
 auth_bp = Blueprint('auth',__name__)
