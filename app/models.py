@@ -9,6 +9,7 @@ class User(db.Model):
     username = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(80), nullable=False, unique=True)
     password = db.Column(db.String(255), nullable=False)
+    joined_at = db.Column(db.DateTime, default=get_ist_time)  
     is_admin = db.Column(db.Boolean, default=False)
 
     # Relationships to children with cascade

@@ -150,6 +150,13 @@ body {
   justify-content: center;
 }
 
+#profile-btn{
+  border-radius: 50%;
+  padding: 10px 10px;
+}
+.btn-primary {
+    background-color: #007bff;
+}
 .btn:hover {
   transform: translateY(-1px);
 }

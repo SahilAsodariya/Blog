@@ -12,6 +12,7 @@ class UserSchema(SQLAlchemySchema):
     is_admin = auto_field()
     posts = auto_field()
     comments = auto_field()
+    joined_at = auto_field()
 
     
 class CommentSchema(SQLAlchemySchema):

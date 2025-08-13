@@ -2,6 +2,7 @@ from flask import Flask
 from .extensions import db, migrate, jwt,mail, socketio
 from .routes.auth import auth_bp
 from .routes.post import post_bp
+from .routes.profile import profile_bp
 from .routes.First_page import bp as first_page_bp
 from .routes.comment import comment_bp 
 from .routes.admin import admin_bp
@@ -22,5 +23,6 @@ def create_app(config = "config.Config"):
     app.register_blueprint(first_page_bp)
     app.register_blueprint(comment_bp, url_prefix="/comment/")
     app.register_blueprint(admin_bp, url_prefix="/admin/")
+    app.register_blueprint(profile_bp, url_prefix="/profile/")
 
     return app

@@ -3,87 +3,57 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>All Blog Posts</title>
+    <title>John Doe - Profile</title>
     <link
       rel="stylesheet"
-      href="{{ url_for('static', filename='css/posts.css') }}"
+      href="{{ url_for('static', filename='css/profile.css') }}"
     />
-    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
   </head>
   <body>
-    <div class="container">
-      <header class="header">
-        <h1>📝 All Blog Posts</h1>
-        <div class="actions">
-          <div
-            class="my-posts-toggle"
-            style="display: flex; align-items: center"
-          >
-            <input
-              type="checkbox"
-              id="my_post"
-              onchange="func()"
-              style="display: none"
-            />
-            <label for="my_post" id="my_post_label" style="display: none"
-              >Only see my posts</label
-            >
+    <div class="profile-container">
+      <!-- Profile Header -->
+      <header class="profile-header" id="profile-header">
+        <img
+          src="/static/uploads/Hritik.jpg"
+          alt="Profile Picture"
+          class="profile-picture"
+        />
+        <div class="info-btn-container">
+          <div class="profile-info">
+            <h1 class="username">John Doe</h1>
+            <p class="email">john@example.com</p>
+            <p class="join-date">Joined on January 15, 2023</p>
+            <div class="stats">
+              <span><strong>12</strong> Posts</span>
+            </div>
           </div>
-
-          <button
-            id="user-btn"
-            class="btn btn-secondary"
-            onclick="goToAdminDashboard()"
-            style="display: none"
-          >
-            All Users
-          </button>
-          <button
-            id="profile-btn"
-            class="btn btn-primary"
-            onclick="goToProfile()"
-            style="display: none"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              fill="currentColor"
-              viewBox="0 0 24 24"
+          <div>
+            <button
+              id="create-post-btn"
+              class="btn btn-primary"
+              onclick="goToCreatePost()"
+              style="display: none"
             >
-              <path
-                d="M12 12c2.7 0 4.9-2.2 4.9-4.9S14.7 2.2 12 2.2 7.1 4.4 7.1 7.1 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v1.6c0 .4.3.8.8.8h17.6c.4 0 .8-.3.8-.8v-1.6c0-3.2-6.4-4.8-9.6-4.8z"
-              />
-            </svg>
-          </button>
-          <button
-            id="login-btn"
-            class="btn btn-primary"
-            onclick="goToLogin()"
-            style="display: none"
-          >
-            Login
-          </button>
-          <button
-            id="register-btn"
-            class="btn btn-secondary"
-            onclick="goToRegister()"
-            style="display: none"
-          >
-            Register
-          </button>
+              + Create New Post
+            </button>
+
+            <button
+              id="logout-btn"
+              class="btn btn-danger"
+              onclick="logout()"
+              style="display: none"
+            >
+              Logout
+            </button>
+          </div>
         </div>
       </header>
-      <div class="search-container">
-        <input
-          type="search"
-          name="search"
-          class="search"
-          placeholder="Search posts..."
-        />
-      </div>
-      <div id="posts-container" class="posts-container"></div>
-      <div class="page-container"></div>
+
+      <!-- Posts Section -->
+      <section class="posts-section">
+        <h2 class="section-title">Posts by John Doe</h2>
+        <div id="posts-container" class="posts-container"></div>
+      </section>
     </div>
 
     <script>
@@ -91,57 +61,76 @@
       const userId = localStorage.getItem("user_id");
       let is_admin = false;
 
-      const socket = io();
-      if (userId) {
-        socket.emit("register_user", { user_id: userId });
-        socket.on("notification", function (data) {
-          alert(data.message);
-        });
-      }
-
       if (token) {
-        document.getElementById("my_post_label").style.display = "inline-block";
-        document.getElementById("my_post").style.display = "inline-block";
-        document.getElementById("profile-btn").style.display = "inline-block";
-
-      } else {
-        document.getElementById("login-btn").style.display = "inline-block";
-        document.getElementById("register-btn").style.display = "inline-block";
+        document.getElementById("create-post-btn").style.display =
+          "inline-block";
+        document.getElementById("logout-btn").style.display = "inline-block";
       }
 
-      const func = async (page = 1) => {
-        const search = document.querySelector(".search").value.trim();
-        const showMyPosts = document.getElementById("my_post").checked;
-
-        fetch(`/post?page=${page}&limit=10&search=${search}`, {
+      const func = async () => {
+        fetch(`/profile/data/${userId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
         })
           .then((res) => res.json())
           .then((data) => {
             if (userId == data.admin) is_admin = true;
-            if (token && is_admin)
-              document.getElementById("user-btn").style.display =
-                "inline-block";
+            // profile view
 
-            renderPagination(
-              data.pagination.current_page,
-              data.pagination.total_pages
-            );
+            const header = document.getElementById("profile-header");
+            header.innerHTML = "";
+
+            header.innerHTML = ` <img src="/static/uploads/Hritik.jpg" alt="Profile Picture" class="profile-picture">
+        <div class="info-btn-container">
+        <div class="profile-info">
+            <h1 class="username">${data.user.username}</h1>
+            <p class="email">${data.user.email}</p>
+            <p class="join-date">Joined At: ${new Date(
+              data.user.joined_at
+            ).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}</p>
+
+            <div class="stats">
+                <span><strong>12</strong> Posts</span>
+            </div>
+        </div>
+        <div>
+           <button
+            id="create-post-btn"
+            class="btn btn-primary"
+            onclick="goToCreatePost()"
+            
+          >
+            + Create New Post
+          </button>
+          
+          <button
+            id="logout-btn"
+            class="btn btn-danger"
+            onclick="logout()"
+      
+          >
+            Logout
+          </button>
+        </div>
+        </div>`;
 
             const container = document.getElementById("posts-container");
             container.innerHTML = "";
 
-            if (!data.posts || data.posts.length === 0) {
+            if (!data.user_data || data.user_data.length === 0) {
               container.innerHTML = `<p class="no-posts">No posts available.</p>`;
               return;
             }
 
-            data.posts.forEach((post) => {
-              if (showMyPosts && post.user_id != userId) return;
-
+            // post view
+            data.user_data.forEach((post) => {
               const hasImage = post.file && post.file.trim() !== "";
               const postDiv = document.createElement("div");
               postDiv.className = "post-card";
@@ -283,67 +272,16 @@
           .catch(() => alert("Error deleting comment."));
       };
 
-      document
-        .querySelector(".search")
-        .addEventListener("input", () => func(1));
-
-      function renderPagination(currentPage, totalPages) {
-        const pageContainer = document.querySelector(".page-container");
-        pageContainer.innerHTML = "";
-
-        const maxPages = 5;
-        const half = Math.floor(maxPages / 2);
-        let start = Math.max(1, currentPage - half);
-        let end = Math.min(totalPages, currentPage + half);
-
-        if (end - start < maxPages - 1) {
-          if (start === 1) end = Math.min(start + maxPages - 1, totalPages);
-          else if (end === totalPages) start = Math.max(end - maxPages + 1, 1);
-        }
-
-        if (currentPage > 1) {
-          addButton("<<", 1);
-          addButton("<", currentPage - 1);
-        }
-
-        for (let i = start; i <= end; i++) {
-          const btn = document.createElement("div");
-          btn.className = "page";
-          if (i === currentPage) btn.classList.add("active");
-          btn.textContent = i;
-          btn.onclick = () => func(i);
-          pageContainer.appendChild(btn);
-        }
-
-        if (currentPage < totalPages) {
-          addButton(">", currentPage + 1);
-          addButton(">>", totalPages);
-        }
-
-        function addButton(text, page) {
-          const btn = document.createElement("div");
-          btn.className = "page nav";
-          btn.textContent = text;
-          btn.onclick = () => func(page);
-          pageContainer.appendChild(btn);
-        }
+      function goToCreatePost() {
+        window.location.href = "/post/create-page";
+      }
+      function logout() {
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("user_id");
+        window.location.href = "/";
       }
 
-      function goToLogin() {
-        window.location.href = "/auth/login";
-      }
-      function goToProfile() {
-        window.location.href = "/profile/";
-      }
-
-      function goToRegister() {
-        window.location.href = "/auth/register";
-      }
-
-      function goToAdminDashboard() {
-        window.location.href = "/admin/only_admin";
-      }
-      func(1);
+      func();
     </script>
   </body>
 </html>
