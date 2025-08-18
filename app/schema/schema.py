@@ -13,7 +13,7 @@ class UserSchema(SQLAlchemySchema):
     posts = auto_field()
     comments = auto_field()
     joined_at = auto_field()
-
+    profile_pictures = auto_field()
     
 class CommentSchema(SQLAlchemySchema):
     class Meta:

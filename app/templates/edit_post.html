@@ -62,7 +62,12 @@
           alert("Post updated successfully!");
           window.location.href = "/";
         } else {
-          alert("Failed to update post. Please try again.");
+          if (response.status === 401) {
+            alert("Unauthorized. Please log in again.");
+            window.location.href = "/auth/login";
+          } else {
+            alert("Failed to update post. Please try again.");
+          }
         }
       });
   </script>

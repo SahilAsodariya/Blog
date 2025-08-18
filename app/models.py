@@ -11,6 +11,8 @@ class User(db.Model):
     password = db.Column(db.String(255), nullable=False)
     joined_at = db.Column(db.DateTime, default=get_ist_time)  
     is_admin = db.Column(db.Boolean, default=False)
+    profile_pictures = db.Column(db.String(255))
+    
 
     # Relationships to children with cascade
     posts = db.relationship('Post', backref='user', lazy=True, cascade='all, delete')

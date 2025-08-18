@@ -1,7 +1,9 @@
-from flask import Blueprint, render_template, jsonify
+from flask import Blueprint, render_template, jsonify, request
 from ..models import User, Post
 from ..schema.schema import CommentSchema,UserSchema
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from ..utils.image_compres_utils import compress_profile_pic
+from ..extensions import db
 
 
 profile_bp = Blueprint('profile', __name__)
@@ -39,3 +41,32 @@ def profile_data(id):
     return jsonify({'user_data' : user_data, "user" : user_schema.dump(user)}), 200
     
     
+@profile_bp.route('/add_profile_pic/<int:id>')
+def profile_pic(id):
+    user = User.query.filter_by(id=id).first()
+    if not user:
+        return jsonify({"message": "User not found"}), 404
+    
+    profile_pic = user.profile_pictures
+    return render_template('add_profile_pic.html', profile_pic=profile_pic)
+
+@profile_bp.route('/edit_profile_pic', methods=['POST'])
+@jwt_required()
+def edit_profile_pic():
+    if request.method == 'POST':
+        id = get_jwt_identity()
+        user = User.query.filter_by(id=id).first()
+        
+        if not user:
+            return jsonify({"message": "User not found"}), 404
+        
+        picture = request.files.get('profile_pictures')
+        
+        if picture:
+            fileName = compress_profile_pic(picture)
+            user.profile_pictures = fileName
+            db.session.commit()
+            return jsonify({"message": "Profile picture updated successfully"}), 200
+        
+        return jsonify({"message": "No picture provided"}), 400
+        

@@ -3,58 +3,66 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>John Doe - Profile</title>
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/profile.css') }}"
     />
   </head>
   <body>
-    <div class="profile-container">
-      <!-- Profile Header -->
-      <header class="profile-header" id="profile-header">
-        <img
-          src="/static/uploads/Hritik.jpg"
-          alt="Profile Picture"
-          class="profile-picture"
-        />
-        <div class="info-btn-container">
-          <div class="profile-info">
-            <h1 class="username">John Doe</h1>
-            <p class="email">john@example.com</p>
-            <p class="join-date">Joined on January 15, 2023</p>
-            <div class="stats">
-              <span><strong>12</strong> Posts</span>
-            </div>
-          </div>
-          <div>
-            <button
-              id="create-post-btn"
-              class="btn btn-primary"
-              onclick="goToCreatePost()"
-              style="display: none"
-            >
-              + Create New Post
-            </button>
-
-            <button
-              id="logout-btn"
-              class="btn btn-danger"
-              onclick="logout()"
-              style="display: none"
-            >
-              Logout
-            </button>
-          </div>
+ <div class="profile-container">
+  <!-- Profile Header -->
+  <header class="profile-header" id="profile-header">
+   
+  <button class="add_profile_btn" onclick="goToAddProfilePic()">
+      +
+  </button>
+    <img
+      src=""
+      alt="Profile Picture"
+      class="profile-picture"
+    />
+    
+    <div class="info-btn-container">
+      <div class="profile-info">
+        <h1 class="username">John Doe</h1>
+        <p class="email">john@example.com</p>
+        <p class="join-date">Joined on January 15, 2023</p>
+        <div class="stats">
+          <span><strong>12</strong> Posts</span>
         </div>
-      </header>
+      </div>
+      <div>
+        <button
+          id="create-post-btn"
+          class="btn btn-primary"
+          onclick="goToCreatePost()"
+          style="display: none"
+        >
+          + Create New Post
+        </button>
 
-      <!-- Posts Section -->
-      <section class="posts-section">
-        <h2 class="section-title">Posts by John Doe</h2>
-        <div id="posts-container" class="posts-container"></div>
-      </section>
+        <button
+          id="logout-btn"
+          class="btn btn-danger"
+          onclick="logout()"
+          style="display: none"
+        >
+          Logout
+        </button>
+      </div>
     </div>
+    <div class="back-container">
+   <a href="/" class="back_btn">X</a>
+ </div>
+  </header>
+
+  <!-- Posts Section -->
+  <section class="posts-section">
+    <h2 class="section-title"></h2>
+    <div id="posts-container" class="posts-container"></div>
+  </section>
+</div>
+
 
     <script>
       const token = localStorage.getItem("access_token");
@@ -77,13 +85,23 @@
         })
           .then((res) => res.json())
           .then((data) => {
+            if (data["msg"]){
+              alert(`${data["msg"]}, please login again.`);
+              window.location.href = "/auth/login";
+            }
             if (userId == data.admin) is_admin = true;
+            document.querySelector('.section-title').innerHTML  = `Posts by ${data.user.username}`;
             // profile view
 
+            const profile_pic = null
             const header = document.getElementById("profile-header");
             header.innerHTML = "";
 
-            header.innerHTML = ` <img src="/static/uploads/Hritik.jpg" alt="Profile Picture" class="profile-picture">
+            header.innerHTML = `
+            <button class="add_profile_btn"  onclick="goToAddProfilePic()">
+      +
+            </button>
+            <img src="${data.user.profile_pictures ? `/static/profile_pictures/${data.user.profile_pictures}` : `/static/profile_pictures/default_profile.png`}" alt="Profile Picture" class="profile-picture">
         <div class="info-btn-container">
         <div class="profile-info">
             <h1 class="username">${data.user.username}</h1>
@@ -97,7 +115,7 @@
             })}</p>
 
             <div class="stats">
-                <span><strong>12</strong> Posts</span>
+                <span><strong>${data.user.posts.length}</strong> Posts</span>
             </div>
         </div>
         <div>
@@ -119,7 +137,11 @@
             Logout
           </button>
         </div>
-        </div>`;
+        
+        </div>
+        <div class="back-container">
+      <a href="/" class="back_btn">X</a>
+    </div>`;
 
             const container = document.getElementById("posts-container");
             container.innerHTML = "";
@@ -147,7 +169,7 @@
                 <p class="content">${post.content}</p>
                 ${
                   hasImage
-                    ? `<img src="static/uploads/${post.file}" class="img" alt="Post Image" />`
+                    ? `<img src="/static/uploads/${post.file}" class="img" alt="Post Image" />`
                     : ""
                 }
               </div>
@@ -279,6 +301,10 @@
         localStorage.removeItem("access_token");
         localStorage.removeItem("user_id");
         window.location.href = "/";
+      }
+
+      function goToAddProfilePic() {
+        window.location.href = `/profile/add_profile_pic/${userId}`;
       }
 
       func();

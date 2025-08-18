@@ -47,31 +47,26 @@ def register():
             return {"message": "Email already registered"}, 400
         else:
             hased_password = generate_password_hash(password)
-            new_user = User(username=name, email=valid_email, password=hased_password)
+            new_user = User(username=name, email=valid_email, password=hased_password,  profile_pictures='default_profile.png')
             db.session.add(new_user)
             db.session.commit()
             send_email(
-                subject= "Welcome to our website",
-                recipients=[f"{valid_email}"],
-                body=f"""Hi {name},
-
-                    Welcome to out blog! 🎉  
-                    We’re excited to have you on board.
-
-                    Here, you’ll find a variety of interesting and informative blog posts shared by passionate writers like you. You can:
-                    - Discover new articles
-                    - Share your own thoughts
-                    - Leave comments and interact with others
-
-                    👉 To get started, simply log in and explore the latest posts.
-
-                    If you have any questions or feedback, feel free to reply to this email.
-
-                    Happy reading & writing!  
-                    — The blog Team
-                    """,
-                    html=''
-            )
+                    subject="Welcome to our website",
+                    recipients=[valid_email],
+                    body=f"Hi {name},\n\nWelcome to our blog! 🎉\nWe’re excited to have you on board...",
+                    html=f"""
+                    <p>Hi <strong>{name}</strong>,</p>
+                    <p>Welcome to our <b>blog</b>! 🎉 We’re excited to have you on board.</p>
+                    <ul>
+                        <li>Discover new articles</li>
+                        <li>Share your own thoughts</li>
+                        <li>Leave comments and interact with others</li>
+                    </ul>
+                    <p>👉 To get started, simply log in and explore the latest posts.</p>
+                    <p>If you have any questions or feedback, feel free to reply to this email.</p>
+                    <p>Happy reading & writing!<br>— The Blog Team</p>
+                    """
+                )
             return  jsonify({"message" : "Registration successful, please login."}), 200
     return render_template('register.html')
 
