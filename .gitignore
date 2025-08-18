@@ -28,3 +28,7 @@ migrations/versions/__pycache__/
 
 # OS specific
 Thumbs.db
+
+app/static/uploads/
+app/static/profile_pictures/
+# Ignore all files in the uploads directory
