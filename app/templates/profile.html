@@ -80,7 +80,7 @@
           },
         })
           .then((res) => res.json())
-          .then((data) => {
+          .then((data) => { 
             if (data["msg"]) {
               alert(`${data["msg"]}, please login again.`);
               window.location.href = "/auth/login";
@@ -168,11 +168,13 @@
                 <span><strong>${data.user.posts.length}</strong> Posts</span>
             </div>
         </div>
-        ${
-          !data.is_primium
-            ? `<a href="/subscription/subscription_plans" class="subscribe-btn">👑 Become a Premium Member</a>`
-            : " "
-        }
+        ${data.is_primium ? `<a  class="subscribe-btn">Expire on ${new Date(
+              data.subscription_end_date
+            ).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            }) }</a>` : `<a href="/subscription/subscription_plans" class="subscribe-btn">👑 Become a Premium Member</a>`}   
         <div>
            <button
             id="create-post-btn"

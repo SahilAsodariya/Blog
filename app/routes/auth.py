@@ -30,7 +30,7 @@ def register():
             name = request.form.get('name')
             email = request.form.get('email')
             password = request.form.get('password')
-             
+            
         try:
             valid = validate_email(email)  # it will throw if invalid
             valid_email = valid.email
