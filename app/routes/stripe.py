@@ -8,7 +8,7 @@ stripe_bp = Blueprint('stripe', __name__)
 def index():
     return render_template("index.html")
 
-@stripe_bp.route('/create-checkout-session', methods=['POST'])  
+@stripe_bp.route('/create-checkout-session-six-month', methods=['POST'])  
 @jwt_required()  # Ensure the user is authenticated
 def create_checkout_session():
     user_id = get_jwt_identity()
@@ -39,9 +39,7 @@ def cancel():
     return jsonify({'message': 'Payment cancelled.'}), 200
 
 
-@stripe_bp.route('/primium_page', methods=['GET'])
-def primium_page():
-    return render_template('primium.html')
+
 
 
 

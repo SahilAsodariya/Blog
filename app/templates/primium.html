@@ -1,63 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Premium Activated ✨</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Premium Activated ✨</title>
 
-  <!-- Optional Google Font -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <!-- Optional Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
 
-  <!-- Your stylesheet -->
-  <link rel="stylesheet" href="{{url_for('static', filename='css/primium.css')}}" />
-</head>
-<body>
-  <!-- Animated background blobs -->
-  <div class="blob blob-1"></div>
-  <div class="blob blob-2"></div>
-  <div class="blob blob-3"></div>
+    <!-- Your stylesheet -->
+    <link
+      rel="stylesheet"
+      href="{{url_for('static', filename='css/primium.css')}}"
+    />
+  </head>
+  <body>
+    <!-- Animated background blobs -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
 
-  <!-- Back button (top-right) -->
-  <a class="back-btn" href="/" aria-label="Go back">⟵ Back</a>
+    <!-- Back button (top-right) -->
+    <a class="back-btn" href="/" aria-label="Go back">Back</a>
 
-  <main class="wrap">
-    <section class="card">
-      <div class="badge">⭐ Premium</div>
+    <main class="wrap">
+      <section class="card">
+        <div class="badge">⭐ Premium</div>
 
-      <h1 class="title">
-        Welcome to <span class="gradient-text">Premium</span>!
-      </h1>
+        <h1 class="title">
+          Welcome to <span class="gradient-text">Premium</span>!
+        </h1>
 
-      <p class="subtitle">
-        You’ve unlocked all the shiny things. Enjoy faster access, priority features, and extra sparkle. ✨
-      </p>
+        <p class="subtitle">
+          You’ve unlocked all the shiny things. Enjoy faster access, priority
+          features, and extra sparkle. ✨
+        </p>
 
-      <ul class="perks">
-        <li>⚡ Priority features unlocked</li>
-        <li>🛡️ Secure & ad-free experience</li>
-        <li>🌈 Early access drops</li>
-        <li>💬 VIP support</li>
-      </ul>
+        <ul class="perks">
+          <li>⚡ Priority features unlocked</li>
+          <li>🛡️ Secure & ad-free experience</li>
+          <li>🌈 Early access drops</li>
+          <li>💬 VIP support</li>
+        </ul>
 
-      <div class="cta-row">
-        <a class="btn btn-primary" href="#">Explore Features</a>
-        <a class="btn btn-ghost" href="#">Manage Subscription</a>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#">Explore Features</a>
+          <a class="btn btn-ghost" href="#">Manage Subscription</a>
+        </div>
+
+        <!-- Decorative success stamp -->
+        <div class="stamp">✓ Active</div>
+      </section>
+
+      <!-- confetti for fun -->
+      <div class="confetti">
+        <span>🎉</span><span>✨</span><span>🌟</span><span>🎉</span
+        ><span>💫</span> <span>🎊</span><span>⭐</span><span>🎉</span
+        ><span>✨</span><span>🌈</span>
       </div>
+    </main>
 
-      <!-- Decorative success stamp -->
-      <div class="stamp">✓ Active</div>
-    </section>
-
-    <!-- confetti for fun -->
-    <div class="confetti">
-      <span>🎉</span><span>✨</span><span>🌟</span><span>🎉</span><span>💫</span>
-      <span>🎊</span><span>⭐</span><span>🎉</span><span>✨</span><span>🌈</span>
-    </div>
-  </main>
-
-  <footer class="foot">
-    <small>Made with 💜 — static page preview</small>
-  </footer>
-</body>
+    <footer class="foot">
+      <small>Made with 💜 — static page preview</small>
+    </footer>
+  </body>
 </html>

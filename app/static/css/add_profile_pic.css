@@ -8,20 +8,19 @@ body {
   background: #f4f6fa;
 }
 
-.back-container{
-    display: flex;
-    justify-content: end;
+.back-container {
+  display: flex;
+  justify-content: end;
 }
 
-.back_btn{
-    padding: 5px 10px;
-    background-color: rgb(144, 142, 142);
-    color: white;
-    font-size: 16px;
-    font-weight: 600;
-    border-radius: 3px;
-    text-decoration: none;
-
+.back_btn {
+  padding: 5px 10px;
+  background-color: rgb(144, 142, 142);
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 3px;
+  text-decoration: none;
 }
 
 .profile-container {
@@ -29,7 +28,7 @@ body {
   padding: 30px;
   border-radius: 15px;
   text-align: center;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   width: 320px;
 }
 

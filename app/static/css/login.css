@@ -1,102 +1,101 @@
 .login-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 80vh;
-    background-color: #f0f2f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  background-color: #f0f2f5;
 }
 
 .login-form {
-    background: white;
-    padding: 30px 40px;
-    border-radius: 10px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-    width: 100%;
-    max-width: 400px;
+  background: white;
+  padding: 30px 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
 }
 
-.back-container{
-    display: flex;
-    justify-content: end;
+.back-container {
+  display: flex;
+  justify-content: end;
 }
 
-.back_btn{
-    padding: 5px 10px;
-    background-color: rgb(144, 142, 142);
-    color: white;
-    font-size: 16px;
-    font-weight: 600;
-    border-radius: 3px;
-    text-decoration: none;
-
+.back_btn {
+  padding: 5px 10px;
+  background-color: rgb(144, 142, 142);
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 3px;
+  text-decoration: none;
 }
 
 .login-form h2 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
 }
 
 .form-group {
-    margin-bottom: 15px;
+  margin-bottom: 15px;
 }
 
 .form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-    color: #555;
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #555;
 }
 
 .form-group input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 16px;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
 }
 
 .login-button {
-    width: 100%;
-    padding: 12px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    cursor: pointer;
-    margin-top: 10px;
+  width: 100%;
+  padding: 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 10px;
 }
 
 .login-button:hover {
-    background-color: #0056b3;
+  background-color: #0056b3;
 }
 
 .register-link {
-    margin-top: 15px;
-    text-align: center;
-    font-size: 14px;
+  margin-top: 15px;
+  text-align: center;
+  font-size: 14px;
 }
 
 .register-link a {
-    color: #007bff;
-    text-decoration: none;
+  color: #007bff;
+  text-decoration: none;
 }
 .register-link a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
-.reset-password-link{
-     margin-top: 15px;
-    text-align: center;
-    font-size: 14px;
+.reset-password-link {
+  margin-top: 15px;
+  text-align: center;
+  font-size: 14px;
 }
 
-.reset-password-link a{
-    color: #007bff;
-    text-decoration: none;
+.reset-password-link a {
+  color: #007bff;
+  text-decoration: none;
 }
 
 .reset-password-link a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }

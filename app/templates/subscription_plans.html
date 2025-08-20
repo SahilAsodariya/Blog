@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Choose Your Subscription</title>
+    <script src="https://js.stripe.com/v3/"></script>
+    <link
+      rel="stylesheet"
+      href="{{url_for('static', filename='css/subscription_plan.css')}}"
+    />
+  </head>
+  <body>
+    <!-- Back Button -->
+    <a href="/profile" class="back-btn"> Back</a>
+
+    <div class="container">
+      <h1 class="title">Choose Your <span>Plan</span></h1>
+
+      <div class="plans">
+        <!-- Basic -->
+        <!-- <div class="plan-card basic">
+        <h2>Basic</h2>
+        <p class="price">$5 <span>/ month</span></p>
+        <ul>
+          <li>✔ Access to free articles</li>
+          <li>✔ Community support</li>
+          <li>✖ No premium badge</li>
+        </ul>
+        <button class="btn">Subscribe</button>
+      </div> -->
+
+        <!-- Pro -->
+        <!-- <div class="plan-card pro">
+        <h2>Pro</h2>
+        <p class="price">$15 <span>/ month</span></p>
+        <ul>
+          <li>✔ Access to all articles</li>
+          <li>✔ Priority support</li>
+          <li>✔ Ad-free experience</li>
+        </ul>
+        <button class="btn">Subscribe</button>
+      </div> -->
+
+        <!-- Premium -->
+        <div class="plan-card premium">
+          <h2>
+            Premium
+            <span class="crown">👑</span>
+          </h2>
+          <p class="price">$200 <span>/ 6 month</span></p>
+          <ul>
+            <li>✔ All Pro features</li>
+            <li>✔ Premium badge on profile</li>
+            <li>✔ Exclusive content</li>
+          </ul>
+          <button class="btn" id="checkout-button">Subscribe</button>
+        </div>
+      </div>
+    </div>
+    <script>
+      const token = localStorage.getItem("access_token");
+      const stripe = Stripe(
+        "pk_test_51RxheODjB9jhyS1MTtwppmeBhSdLLxgZZeaKXlhOaZ2Oo2byf2J9ekanhLW8x4uDnrIf29F290uQiYDc04MvLLKP00p0luq5g8"
+      );
+
+      document
+        .getElementById("checkout-button")
+        .addEventListener("click", () => {
+          fetch("/stripe/create-checkout-session-six-month", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              stripe.redirectToCheckout({ sessionId: data.id });
+            });
+        });
+    </script>
+  </body>
+</html>

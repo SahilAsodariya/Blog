@@ -4,7 +4,7 @@
   rel="stylesheet"
   href="{{ url_for('static', filename='css/login.css') }}"
 />
-<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>    
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 {% endblock %} {% block content %}
 <div class="login-container">
   <form id="loginForm" class="login-form">
@@ -36,13 +36,14 @@
     </p>
 
     <p class="reset-password-link">
-      <a href="{{ url_for('auth.reset_password_request') }}"> Forgate Password</a>
+      <a href="{{ url_for('auth.reset_password_request') }}">
+        Forgate Password</a
+      >
     </p>
   </form>
 </div>
 
 <script>
-
   document
     .getElementById("loginForm")
     .addEventListener("submit", async function (e) {
@@ -62,11 +63,10 @@
       if (response.ok && data.access_token) {
         localStorage.setItem("access_token", data.access_token);
         localStorage.setItem("user_id", data.user_id);
-        if (data.primium_user){
-          window.location.href = '/stripe/primium_page'
-        }
-        else{
-          window.location.href = '/';
+        if (data.primium_user) {
+          window.location.href = "/subscription/primium_page";
+        } else {
+          window.location.href = "/";
         }
       } else {
         alert(data.message || "Login failed");

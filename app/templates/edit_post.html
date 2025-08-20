@@ -1,76 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Edit Post</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/edit_post.css') }}"
+    />
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <title>Edit Post</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/edit_post.css') }}" />
-</head>
+  <body>
+    <div class="container">
+      <h1>Edit Post ✏️</h1>
 
-<body>
-  <div class="container">
-    <h1>Edit Post ✏️</h1>
+      <form method="POST" class="edit-form">
+        <label for="title">Title</label>
+        <input
+          type="text"
+          name="title"
+          id="title"
+          value="{{ post.title }}"
+          required
+        />
 
-    <form method="POST" class="edit-form">
-      <label for="title">Title</label>
-      <input type="text" name="title" id="title" value="{{ post.title }}" required />
+        <label for="content">Content</label>
+        <textarea name="content" id="content" rows="10" required>
+{{ post.content }}</textarea
+        >
 
-      <label for="content">Content</label>
-      <textarea name="content" id="content" rows="10" required>
-{{ post.content }}</textarea>
+        <div>
+          <input type="file" id="fileInput" />
+        </div>
 
-      <div>
-        <input type="file" id="fileInput">
-      </div>
+        <div class="form-actions">
+          <button type="submit" class="btn primary">Update Post</button>
+          <a href="/" class="btn secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+    <script>
+      document
+        .querySelector(".edit-form")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
 
-      <div class="form-actions">
-        <button type="submit" class="btn primary">Update Post</button>
-        <a href="/" class="btn secondary">Cancel</a>
-      </div>
-    </form>
-  </div>
-  <script>
-    document
-      .querySelector(".edit-form")
-      .addEventListener("submit", async function (e) {
-        e.preventDefault();
+          const token = localStorage.getItem("access_token");
 
-        const token = localStorage.getItem("access_token");
+          const fileInput = document.getElementById("fileInput");
+          const file = fileInput.files[0];
+          const title = document.getElementById("title").value;
+          const content = document.getElementById("content").value;
 
-        const fileInput = document.getElementById('fileInput');
-        const file = fileInput.files[0];
-        const title = document.getElementById("title").value;
-        const content = document.getElementById("content").value;
+          const formData = new FormData();
+          formData.append("title", title);
+          formData.append("content", content);
+          formData.append("file", file);
 
-        const formData = new FormData();
-        formData.append("title", title);
-        formData.append("content", content);
-        formData.append("file", file);
+          const response = await fetch(
+            "{{ url_for('post.update_post', post_id=post.id) }}",
+            {
+              method: "PUT",
+              headers: {
+                Authorization: "Bearer " + token,
+              },
+              body: formData,
+            }
+          );
 
-        const response = await fetch(
-          "{{ url_for('post.update_post', post_id=post.id) }}",
-          {
-            method: "PUT",
-            headers: {
-              Authorization: "Bearer " + token,
-            },
-            body: formData,
-          }
-        );
-
-        if (response.ok) {
-          alert("Post updated successfully!");
-          window.location.href = "/";
-        } else {
-          if (response.status === 401) {
-            alert("Unauthorized. Please log in again.");
-            window.location.href = "/auth/login";
+          if (response.ok) {
+            alert("Post updated successfully!");
+            window.location.href = "/";
           } else {
-            alert("Failed to update post. Please try again.");
+            if (response.status === 401) {
+              alert("Unauthorized. Please log in again.");
+              window.location.href = "/auth/login";
+            } else {
+              alert("Failed to update post. Please try again.");
+            }
           }
-        }
-      });
-  </script>
-</body>
-
+        });
+    </script>
+  </body>
 </html>

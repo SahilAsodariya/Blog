@@ -1,0 +1,125 @@
+/* General styles */
+body {
+  font-family: "Poppins", sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  text-align: center;
+}
+
+.title {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+}
+
+.title span {
+  color: #ffd700;
+}
+
+/* Plans Layout */
+.plans {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.plan-card {
+  background: #fff;
+  color: #333;
+  padding: 2rem;
+  border-radius: 15px;
+  width: 260px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.plan-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+}
+
+/* Plan-specific colors */
+.basic {
+  border-top: 6px solid #6dd5ed;
+}
+.pro {
+  border-top: 6px solid #4facfe;
+}
+.premium {
+  border-top: 6px solid #ffd700;
+}
+
+/* Crown */
+.crown {
+  font-size: 1.5rem;
+  margin-left: 5px;
+}
+
+/* Price */
+.price {
+  font-size: 1.8rem;
+  margin: 1rem 0;
+  color: #222;
+}
+
+.price span {
+  font-size: 0.9rem;
+  color: #777;
+}
+
+/* List */
+.plan-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  text-align: left;
+}
+
+.plan-card ul li {
+  margin: 8px 0;
+  font-size: 0.95rem;
+}
+
+/* Button */
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn:hover {
+  background: linear-gradient(135deg, #764ba2, #667eea);
+}
+
+/* Back Button */
+.back-btn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 8px 15px;
+  border-radius: 20px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: background 0.3s;
+}
+
+.back-btn:hover {
+  background: rgba(255, 255, 255, 0.4);
+}

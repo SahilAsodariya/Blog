@@ -12,8 +12,7 @@
     <div class="profile-container">
       <!-- Profile Header -->
       <header class="profile-header" id="profile-header">
-
-        <button class="add_profile_btn" onclick="goToAddProfilePic()">+</button>
+        <!-- <button class="add_profile_btn" onclick="goToAddProfilePic()">+</button>
         <img
           src="/static/profile_pictures/default_profile.png"
           alt="Profile Picture"
@@ -21,6 +20,7 @@
         />
 
         <div class="info-btn-container">
+           
           <div class="profile-info">
             <h1 class="username">John Doe</h1>
             <p class="email">john@example.com</p>
@@ -51,7 +51,7 @@
         </div>
         <div class="back-container">
           <a href="/" class="back_btn">X</a>
-        </div>
+        </div> -->
       </header>
 
       <!-- Posts Section -->
@@ -66,10 +66,9 @@
       const userId = localStorage.getItem("user_id");
       let is_admin = false;
 
-      if (token) {
-        document.getElementById("create-post-btn").style.display =
-          "inline-block";
-        document.getElementById("logout-btn").style.display = "inline-block";
+      if (!token) {
+        document.getElementById("create-post-btn").style.display = "none";
+        document.getElementById("logout-btn").style.display = "none";
       }
 
       const func = async () => {
@@ -87,8 +86,7 @@
               window.location.href = "/auth/login";
             }
             if (userId == data.admin) is_admin = true;
-            
-            
+
             document.querySelector(
               ".section-title"
             ).innerHTML = `Posts by ${data.user.username}`;
@@ -99,8 +97,9 @@
             header.innerHTML = "";
 
             header.innerHTML = `
-            ${data.is_primium ? 
-          `<svg
+            ${
+              data.is_primium
+                ? `<svg
              class="primium_tag"
   xmlns="http://www.w3.org/2000/svg"
   viewBox="0 0 64 64"
@@ -138,7 +137,9 @@
 
   <!-- Subtle top shine -->
   <path d="M9 27 C18 20, 46 20, 55 27" fill="none" stroke="url(#shine)" stroke-width="3" opacity="0.6"/>
-</svg>` : " " }
+</svg>`
+                : " "
+            }
 
             <button class="add_profile_btn"  onclick="goToAddProfilePic()">
       +
@@ -147,8 +148,11 @@
               data.user.profile_pictures
                 ? `/static/profile_pictures/${data.user.profile_pictures}`
                 : `/static/profile_pictures/default_profile.png`
-            }" alt="Profile Picture" class="profile-picture" ${data.is_primium ? 'style="border: 3px solid #FFD700;"' : ""} />
+            }" alt="Profile Picture" class="profile-picture" ${
+              data.is_primium ? 'style="border: 3px solid #FFD700;"' : ""
+            } />
         <div class="info-btn-container">
+           
         <div class="profile-info">
             <h1 class="username">${data.user.username}</h1>
             <p class="email">${data.user.email}</p>
@@ -164,6 +168,11 @@
                 <span><strong>${data.user.posts.length}</strong> Posts</span>
             </div>
         </div>
+        ${
+          !data.is_primium
+            ? `<a href="/subscription/subscription_plans" class="subscribe-btn">👑 Become a Premium Member</a>`
+            : " "
+        }
         <div>
            <button
             id="create-post-btn"

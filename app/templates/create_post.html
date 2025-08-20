@@ -1,82 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Create Post</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/create_post.css') }}"
+    />
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <title>Create Post</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/create_post.css') }}" />
-</head>
-
-<body>
-  <div class="form-container">
-    <div class="back-container">
-      <a href="/" class="back_btn">X</a>
-    </div>
-    <h1>Create New Post</h1>
-    <form id="createPost" method="POST">
-      <div class="form-group">
-        <label for="title">Title</label>
-        <input type="text" name="title" id="title" placeholder="Enter post title" required />
+  <body>
+    <div class="form-container">
+      <div class="back-container">
+        <a href="/profile" class="back_btn">X</a>
       </div>
-
-      <div class="form-group">
-        <label for="content">Content</label>
-        <textarea name="content" id="content" rows="8" placeholder="Write your post..." required></textarea>
-        <div>
-          <input type="file" id="fileInput">
+      <h1>Create New Post</h1>
+      <form id="createPost" method="POST">
+        <div class="form-group">
+          <label for="title">Title</label>
+          <input
+            type="text"
+            name="title"
+            id="title"
+            placeholder="Enter post title"
+            required
+          />
         </div>
-      </div>
 
-      <div class="post_btn" style="display: flex; gap: 10px">
-        <button class="btn submit" type="submit">Publish Post</button>
-        <button class="cancel btn">Cancel</button>
-      </div>
-    </form>
-  </div>
-  <script>
-     
-    document.querySelector(".cancel").addEventListener("click", function () {
-      title.value = "";
-      content.value = "";
-      window.location.href = "/";
-    });
+        <div class="form-group">
+          <label for="content">Content</label>
+          <textarea
+            name="content"
+            id="content"
+            rows="8"
+            placeholder="Write your post..."
+            required
+          ></textarea>
+          <div>
+            <input type="file" id="fileInput" />
+          </div>
+        </div>
 
-    document
-      .getElementById("createPost")
-      .addEventListener("submit", async function (e) {
-        e.preventDefault();
-
-        const fileInput = document.getElementById('fileInput');
-        const file = fileInput.files[0];
-        const title = document.getElementById("title").value;
-        const content = document.getElementById("content").value;
-
-        const formData = new FormData();
-        formData.append("title", title);
-        formData.append("content", content);
-        formData.append("file", file);
-
-
-        const token = localStorage.getItem("access_token");
-
-        const response = await fetch("/post/create", {
-          method: "POST",
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-          body: formData,
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-          alert("Post created successfully!!");
-          window.location.href = "/";
-        } else {
-          alert("Oops!! Something is going wrong");
-        }
+        <div class="post_btn" style="display: flex; gap: 10px">
+          <button class="btn submit" type="submit">Publish Post</button>
+          <button class="cancel btn">Cancel</button>
+        </div>
+      </form>
+    </div>
+    <script>
+      document.querySelector(".cancel").addEventListener("click", function () {
+        title.value = "";
+        content.value = "";
+        window.location.href = "/";
       });
-  </script>
-</body>
 
+      document
+        .getElementById("createPost")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const fileInput = document.getElementById("fileInput");
+          const file = fileInput.files[0];
+          const title = document.getElementById("title").value;
+          const content = document.getElementById("content").value;
+
+          const formData = new FormData();
+          formData.append("title", title);
+          formData.append("content", content);
+          formData.append("file", file);
+
+          const token = localStorage.getItem("access_token");
+
+          const response = await fetch("/post/create", {
+            method: "POST",
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+            body: formData,
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            alert("Post created successfully!!");
+            window.location.href = "/";
+          } else {
+            alert("Oops!! Something is going wrong");
+          }
+        });
+    </script>
+  </body>
 </html>
