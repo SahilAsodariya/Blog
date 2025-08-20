@@ -1,5 +1,6 @@
 import os
 from dotenv import load_dotenv
+import stripe
 
 load_dotenv()
 
@@ -9,6 +10,7 @@ class Config:
     JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', 'default_jwt')
     DEBUG = os.getenv("DEBUG", "False").lower() in ["true", "1", "yes"]
     UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER', 'uploads')
+    stripe.api_key = os.getenv('STRIPE_SECRET_KEY')
 
     # Gmail SMTP configuration
     MAIL_SERVER = os.getenv('MAIL_SERVER', 'smtp.gmail.com')

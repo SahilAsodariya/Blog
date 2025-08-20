@@ -10,6 +10,17 @@ body {
   position: relative; /* important for absolute positioning */
   padding: 20px;
   text-align: center;
+  
+}
+
+.primium_tag{
+  padding: 2px 5px;
+  display: flex;
+  position: absolute;
+  top: -5px;
+  left: 52px;
+  height: 50px;
+  width: 50px;
 }
 
 .back-container {
@@ -47,7 +58,7 @@ body {
   align-items: center;
   background: white;
   border-radius: 8px;
-  padding: 20px;
+  padding: 40px 20px 20px 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   margin-bottom: 30px;
 }

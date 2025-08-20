@@ -21,6 +21,7 @@ def profile_page():
 def profile_data(id):
     user = User.query.filter_by(id=id).first()
     user_posts = Post.query.filter_by(user_id=id).order_by(Post.created_at.desc()).all()
+    is_primium = user.subscription is not None
     
     user_data = []
     for post in user_posts:
@@ -38,7 +39,7 @@ def profile_data(id):
             
         })
 
-    return jsonify({'user_data' : user_data, "user" : user_schema.dump(user)}), 200
+    return jsonify({'user_data' : user_data, "user" : user_schema.dump(user), "is_primium" : is_primium}), 200
     
     
 @profile_bp.route('/add_profile_pic/<int:id>')

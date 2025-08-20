@@ -1,0 +1,47 @@
+from flask import Blueprint, jsonify, render_template
+from flask_jwt_extended import jwt_required, get_jwt_identity
+import stripe
+
+stripe_bp = Blueprint('stripe', __name__)
+
+@stripe_bp.route("/")
+def index():
+    return render_template("index.html")
+
+@stripe_bp.route('/create-checkout-session', methods=['POST'])  
+@jwt_required()  # Ensure the user is authenticated
+def create_checkout_session():
+    user_id = get_jwt_identity()
+    try:
+        checkout_session = stripe.checkout.Session.create(
+        payment_method_types=['card'],
+        line_items=[{
+            'price': 'price_1RxlHdDjB9jhyS1Mzk5DTuLA',  # subscription price ID from Stripe
+            'quantity': 1,
+        }],
+        mode='subscription',
+        success_url='http://127.0.0.1:5000/stripe/success?session_id={CHECKOUT_SESSION_ID}',
+        cancel_url='http://127.0.0.1:5000/stripe/cancel',
+        metadata={
+        "user_id": user_id  # 👈 store your app's user_id here
+    }
+    )
+        return jsonify({'id': checkout_session.id})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
+@stripe_bp.route('/success', methods=['GET'])
+def success():
+    return render_template('primium.html')
+
+@stripe_bp.route('/cancel', methods=['GET'])        
+def cancel():
+    return jsonify({'message': 'Payment cancelled.'}), 200
+
+
+@stripe_bp.route('/primium_page', methods=['GET'])
+def primium_page():
+    return render_template('primium.html')
+
+
+

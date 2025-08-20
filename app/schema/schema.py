@@ -1,5 +1,5 @@
 from marshmallow_sqlalchemy import SQLAlchemySchema, auto_field, fields
-from ..models import User,Post, Comment
+from ..models import User,Post, Comment, Subscription
 
 class UserSchema(SQLAlchemySchema):
     class Meta:
@@ -41,3 +41,15 @@ class PostSchema(SQLAlchemySchema):
     created_at = auto_field()
     user = fields.Nested(UserSchema)
     Comment = fields.Nested(CommentSchema, many=True)
+    
+    
+class SubscriptionSchema(SQLAlchemySchema):
+    class Meta:
+        model = Subscription
+        load_instance = True
+        
+    id = auto_field()
+    user_id = auto_field()
+    stripe_subscription_id = auto_field()
+    start_date = auto_field()
+    end_date = auto_field()

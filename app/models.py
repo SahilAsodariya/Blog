@@ -1,8 +1,13 @@
 from .extensions import db
 from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
+
 
 def get_ist_time():
     return datetime.utcnow() + timedelta(hours=5, minutes=30)
+
+def get_ist_time_after_6_months():
+    return get_ist_time() + relativedelta(months=+6)
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -13,10 +18,19 @@ class User(db.Model):
     is_admin = db.Column(db.Boolean, default=False)
     profile_pictures = db.Column(db.String(255))
     
-
     # Relationships to children with cascade
     posts = db.relationship('Post', backref='user', lazy=True, cascade='all, delete')
     comments = db.relationship('Comment', backref='user', lazy=True, cascade='all, delete')
+    subscription = db.relationship('Subscription', backref='user', lazy=True, uselist=False, cascade='all, delete')
+    
+class Subscription(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    stripe_subscription_id = db.Column(db.String(255), nullable=True)  # Store Stripe subscription ID if needed
+    start_date = db.Column(db.DateTime, default=get_ist_time)
+    end_date = db.Column(db.DateTime, default=get_ist_time_after_6_months)
+
+    
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)

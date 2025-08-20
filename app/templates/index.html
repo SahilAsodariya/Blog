@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Stripe Checkout</title>
+  <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+  <h1>Buy Test Product ($20)</h1>
+  <button id="checkout-button">Checkout</button>
+
+  <script>
+    const token = localStorage.getItem("access_token");
+    const stripe = Stripe("pk_test_51RxheODjB9jhyS1MTtwppmeBhSdLLxgZZeaKXlhOaZ2Oo2byf2J9ekanhLW8x4uDnrIf29F290uQiYDc04MvLLKP00p0luq5g8");
+
+    document.getElementById("checkout-button").addEventListener("click", () => {
+      fetch("/stripe/create-checkout-session", { method: "POST", headers: {
+        'Authorization': `Bearer ${token}`,
+      } })
+        .then((res) => res.json())
+        .then((data) => 
+        {
+          console.log(data)
+          stripe.redirectToCheckout({ sessionId: data.id })
+        }
+        );
+    });
+  </script>
+</body>
+</html>
