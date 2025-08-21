@@ -13,7 +13,6 @@ comments_schema = CommentSchema(many=True)
 subscription_schema = SubscriptionSchema()
 
 @profile_bp.route('/')
-
 def profile_page():
     return render_template('profile.html')
 

@@ -46,13 +46,15 @@ def stripe_webhook():
 
     elif event["type"] == "customer.subscription.deleted":
         subscription = event["data"]["object"]
-        print(f"❌ Subscription canceled: {subscription['id']}")
+        subscription_id = subscription['id']
+        
+        print(f"❌ Subscription canceled: {subscription_id}")
     
-        user = Subscription.query.filter_by(stripe_subscription_id=subscription['id']).first()
+        user = Subscription.query.filter_by(stripe_subscription_id=subscription_id).first()
         if user:
             db.session.delete(user)
         else:
-            print(f"User with subscription id {subscription['id']} not found.") 
+            print(f"User with subscription id {subscription_id} not found.") 
     else:
         print(f"Unhandled event type: {event['type']}")
         
@@ -61,7 +63,16 @@ def stripe_webhook():
     return jsonify(success=True), 200
 
 @weebhook_bp.route("/webhook/user", methods=["GET"])
-def get_user_subscription():
+def get_user_subscription():    
     user = Subscription.query.all()
     result = subscription_schema.dump(user)
     return jsonify(result), 200
+
+
+@weebhook_bp.route("/webhook/delete/user", methods=["POST"])
+def delete_user_subscription():    
+    user = Subscription.query.all()
+    for u in user:
+        db.session.delete(u)
+    db.session.commit()
+    return jsonify("Badha saff ho bhai."), 200

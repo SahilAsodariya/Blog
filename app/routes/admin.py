@@ -2,7 +2,7 @@ from flask import jsonify,Blueprint, render_template
 from flask_jwt_extended import get_jwt_identity, verify_jwt_in_request,jwt_required
 from functools import wraps
 from ..extensions import db
-from ..models import User,Comment
+from ..models import User,Comment, Subscription
 from ..schema.schema import UserSchema# update with actual import
 
 admin_bp = Blueprint('admin',__name__)
@@ -50,8 +50,11 @@ def all_users():
 @admin_bp.route('/delete_user/<int:user_id>', methods=['DELETE', 'POST','GET'])
 def delete_user(user_id):
     user = User.query.get(user_id)
+    subscription_user = Subscription.query.filter_by(user_id=user_id).all()
     if user:
         db.session.delete(user)
+        for sub in subscription_user:
+            db.session.delete(sub)
         db.session.commit()
         return render_template("admin_dashboard.html", message="User deleted successfully")
     return jsonify({"error": "User not found"}), 404
