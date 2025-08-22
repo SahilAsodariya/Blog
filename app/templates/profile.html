@@ -11,9 +11,7 @@
   <body>
     <div class="profile-container">
       <!-- Profile Header -->
-      <header class="profile-header" id="profile-header">
-     
-      </header>
+      <header class="profile-header" id="profile-header"></header>
 
       <!-- Posts Section -->
       <section class="posts-section">
@@ -41,16 +39,13 @@
           },
         })
           .then((res) => res.json())
-          .then((data) => { 
+          .then((data) => {
             if (data["msg"]) {
               alert(`${data["msg"]}, please login again.`);
               window.location.href = "/auth/login";
             }
-            if (userId == data.admin) is_admin = true;
+            is_admin = data.admin;
 
-            document.querySelector(
-              ".section-title"
-            ).innerHTML = `Posts by ${data.user.username}`;
             // profile view
 
             const profile_pic = null;
@@ -59,7 +54,7 @@
 
             header.innerHTML = `
             ${
-              data.is_primium
+              data.is_premium
                 ? `<svg
              class="primium_tag"
   xmlns="http://www.w3.org/2000/svg"
@@ -110,7 +105,7 @@
                 ? `/static/profile_pictures/${data.user.profile_pictures}`
                 : `/static/profile_pictures/default_profile.png`
             }" alt="Profile Picture" class="profile-picture" ${
-              data.is_primium ? 'style="border: 3px solid #FFD700;"' : ""
+              data.is_premium ? 'style="border: 3px solid #FFD700;"' : ""
             } />
         <div class="info-btn-container">
            
@@ -129,13 +124,17 @@
                 <span><strong>${data.user.posts.length}</strong> Posts</span>
             </div>
         </div>
-        ${data.is_primium ? `<a  class="subscribe-btn">Expire on ${new Date(
-              data.subscription_end_date
-            ).toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            }) }</a>` : `<a href="/subscription/subscription_plans" class="subscribe-btn">👑 Become a Premium Member</a>`}   
+        ${
+          data.is_premium
+            ? `<a  class="subscribe-btn">Expire on ${new Date(
+                data.subscription_end_date
+              ).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}</a>`
+            : `<a href="/subscription/subscription_plans" class="subscribe-btn">👑 Become a Premium Member</a>`
+        }   
         <div>
            <button
             id="create-post-btn"

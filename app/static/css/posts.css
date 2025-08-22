@@ -28,6 +28,15 @@ body {
   color: #1a202c;
 }
 
+.user_search_btn {
+  padding: 5px 8px 2px 8px;
+  background-color: rgb(196, 193, 193);
+  color: white;
+  font-weight: 600;
+  border-radius: 3px;
+  text-decoration: none;
+}
+
 .actions {
   display: flex;
   gap: 1rem;
