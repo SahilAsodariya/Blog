@@ -55,12 +55,23 @@ def stripe_webhook():
             db.session.delete(user)
         else:
             print(f"User with subscription id {subscription_id} not found.") 
+        
+    elif event["type"] == "customer.subscription.updated":
+        subscription = event["data"]["object"]
+        status = subscription.get("status")  # active, canceled, past_due, unpaid
+        print(f"🔄 Subscription {subscription['id']} updated. New status: {status}")
+
+        sub = Subscription.query.filter_by(stripe_subscription_id=subscription['id']).first()
+        if sub:
+            sub.status = status
+            db.session.commit()
+
     else:
         print(f"Unhandled event type: {event['type']}")
         
     db.session.commit()  # Commit all changes to the database
 
-    return jsonify(success=True), 200
+    return jsonify(success=True), 200   
 
 @weebhook_bp.route("/webhook/user", methods=["GET"])
 def get_user_subscription():    
@@ -69,10 +80,10 @@ def get_user_subscription():
     return jsonify(result), 200
 
 
-@weebhook_bp.route("/webhook/delete/user", methods=["POST"])
-def delete_user_subscription():    
-    user = Subscription.query.all()
-    for u in user:
-        db.session.delete(u)
-    db.session.commit()
-    return jsonify("Badha saff ho bhai."), 200
+# @weebhook_bp.route("/webhook/delete/user", methods=["POST"])
+# def delete_user_subscription():    
+#     user = Subscription.query.all()
+#     for u in user:
+#         db.session.delete(u)
+#     db.session.commit()
+#     return jsonify("Badha saff ho bhai."), 200
