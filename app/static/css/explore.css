@@ -1,0 +1,104 @@
+body {
+  font-family: "Arial", sans-serif;
+  background: #f4f4f4;
+  margin: 0;
+}
+
+.container {
+  max-width: 1000px;
+  margin: auto;
+}
+.back-container {
+  display: flex;
+  justify-content: end;
+  margin-top: 30px;
+}
+
+.back_btn {
+  padding: 5px 10px;
+  background-color: rgb(144, 142, 142);
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 3px;
+  text-decoration: none;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.search-box {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.search-box input {
+  padding: 10px;
+  width: 300px;
+  border-radius: 5px 0 0 5px;
+  border: 1px solid #ccc;
+  outline: none;
+}
+
+.search-box button {
+  padding: 10px 15px;
+  border: none;
+  background: #007bff;
+  color: white;
+  border-radius: 0 5px 5px 0;
+  cursor: pointer;
+}
+
+.search-box button:hover {
+  background: #0056b3;
+}
+
+.user-grid {
+  display: grid;
+  grid-template-rows: repeat(auto-fill, minmax(150px));
+  gap: 20px;
+  width: 50%;
+  margin: auto;
+}
+
+.user-card {
+  display: flex;
+  gap: 50px;
+  background: white;
+  padding: 10px;
+  text-align: center;
+  border-radius: 10px;
+  text-decoration: none;
+  color: #333;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.user-card:hover {
+  transform: translateY(-5px);
+}
+
+.user-card img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.user-info {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.username {
+  font-weight: bold;
+  font-size: 16px;
+}
+.email {
+  font-size: 14px;
+  margin-top: -10px;
+  color: gray;
+}

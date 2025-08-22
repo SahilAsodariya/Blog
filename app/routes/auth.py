@@ -42,6 +42,10 @@ def register():
         if not is_valid:
             return jsonify({"message":message}),400
         
+        register_username = User.query.filter_by(username=name).first()
+        if register_username:
+            return {"message": "Username already taken"}, 400
+        
         registered_email = User.query.filter_by(email=email).first()
         if registered_email:
             return {"message": "Email already registered"}, 400

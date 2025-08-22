@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, jsonify, request
-from ..models import User, Post
+from ..models import User, Post, Subscription
 from ..schema.schema import CommentSchema,UserSchema,SubscriptionSchema
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from ..utils.image_compres_utils import compress_profile_pic
@@ -16,13 +16,20 @@ subscription_schema = SubscriptionSchema()
 def profile_page():
     return render_template('profile.html')
 
+
 @profile_bp.route('/data/<int:id>')
 @jwt_required()
 def profile_data(id):
     user = User.query.filter_by(id=id).first()
+    admin = user.is_admin if user else False
     user_posts = Post.query.filter_by(user_id=id).order_by(Post.created_at.desc()).all()
-    is_primium = user.subscription is not None
-    subscription_end_date = subscription_schema.dump(user.subscription)['end_date'] if is_primium else None
+    sub = (
+    Subscription.query.filter_by(user_id=id)
+    .order_by(Subscription.start_date.desc())
+    .first())
+    is_premium = sub is not None and sub.status == "active"
+
+    subscription_end_date = subscription_schema.dump(user.subscription)['end_date'] if is_premium else None
     
     
     user_data = []
@@ -41,7 +48,7 @@ def profile_data(id):
             
         })
 
-    return jsonify({'user_data' : user_data, "user" : user_schema.dump(user), "is_primium" : is_primium, "subscription_end_date" : subscription_end_date if is_primium else None,}), 200
+    return jsonify({'user_data' : user_data, "user" : user_schema.dump(user), "is_premium" : is_premium, "subscription_end_date" : subscription_end_date if is_premium else None, "admin" : admin}), 200
     
     
 @profile_bp.route('/add_profile_pic/<int:id>')
