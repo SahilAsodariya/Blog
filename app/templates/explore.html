@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Explore Users</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/explore.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div class="back-container">
+        <a href="/" class="back_btn">X</a>
+      </div>
+      <h1>Explore Users</h1>
+
+      <!-- Search Box -->
+      <div class="search-box">
+        <input type="search" id="search" placeholder="Search users..." />
+      </div>
+
+      <!-- User List -->
+      <div class="user-grid" id="user-grid">
+        <!-- Sample Static Users -->
+        <!-- <a href="/profile/1" class="user-card">
+        <img src="/static/uploads/Hritik.jpg" alt="John Doe">
+        <p class="username">John Doe</p>
+      </a>
+
+      <a href="/profile/2" class="user-card">
+        <img src="/static/uploads/Hritik.jpg" alt="Jane Smith">
+        <p class="username">Jane Smith</p>
+      </a>
+
+      <a href="/profile/3" class="user-card">
+        <img src="/static/uploads/Hritik.jpg" alt="Alex Johnson">
+        <p class="username">Alex Johnson</p>
+      </a>
+
+      <a href="/profile/4" class="user-card">
+        <img src="/static/uploads/Hritik.jpg" alt="Emily Clark">
+        <p class="username">Emily Clark</p>
+      </a> -->
+      </div>
+    </div>
+
+    <script>
+      const searchUser = () => {
+        const token = localStorage.getItem("access_token");
+        const input = document.getElementById("search").value.toLowerCase();
+        const container = document.getElementById("user-grid");
+        container.innerHTML = "";
+        fetch(`/explore/search-users?search=${input}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            data.users.forEach((user) => {
+              console.log(user.profile_pictures);
+              const userCard = document.createElement("a");
+              userCard.href = `/explore/proifile/${user.id}`;
+              userCard.className = "user-card";
+              userCard.innerHTML = `
+            <img src="/static/profile_pictures/${user.profile_pictures}" alt="${user.username}">
+            <div class="user-info">
+              <p class="username">${user.username}</p>
+              <p class="email">${user.email}</p>
+            </div>
+            `;
+              container.appendChild(userCard);
+            });
+          });
+      };
+      document
+        .getElementById("search")
+        .addEventListener("input", () => searchUser());
+    </script>
+  </body>
+</html>
