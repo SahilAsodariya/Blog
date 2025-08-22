@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/profile.css') }}"
+    />
+  </head>
+  <body>
+    <div class="profile-container">
+      <!-- Profile Header -->
+      <header class="profile-header" id="profile-header">
+        {% if is_premium %}
+        <svg
+          class="primium_tag"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 64 64"
+          width="32"
+          height="32"
+          aria-hidden="true"
+          role="img"
+        >
+          <defs>
+            <linearGradient id="gold" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#FFE58A" />
+              <stop offset="45%" stop-color="#F7C948" />
+              <stop offset="100%" stop-color="#E6A700" />
+            </linearGradient>
+            <linearGradient id="shine" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="rgba(255,255,255,0.6)" />
+              <stop offset="60%" stop-color="rgba(255,255,255,0)" />
+            </linearGradient>
+          </defs>
+
+          <!-- Base crown -->
+          <path
+            d="M6 47 L10 20 L24 32 L32 16 L40 32 L54 20 L58 47 Z"
+            fill="url(#gold)"
+            stroke="#9C6B00"
+            stroke-width="2"
+            stroke-linejoin="round"
+          />
+          <!-- Band -->
+          <rect
+            x="8"
+            y="43"
+            width="48"
+            height="8"
+            rx="3"
+            fill="#E4B200"
+            stroke="#9C6B00"
+            stroke-width="2"
+          />
+          <!-- Gems -->
+          <circle
+            cx="32"
+            cy="38"
+            r="3.5"
+            fill="#56CCF2"
+            stroke="#2F80ED"
+            stroke-width="1.5"
+          />
+          <circle
+            cx="18"
+            cy="40"
+            r="2.8"
+            fill="#EB5757"
+            stroke="#C0392B"
+            stroke-width="1.2"
+          />
+          <circle
+            cx="46"
+            cy="40"
+            r="2.8"
+            fill="#6FCF97"
+            stroke="#27AE60"
+            stroke-width="1.2"
+          />
+
+          <!-- Subtle top shine -->
+          <path
+            d="M9 27 C18 20, 46 20, 55 27"
+            fill="none"
+            stroke="url(#shine)"
+            stroke-width="3"
+            opacity="0.6"
+          />
+        </svg>
+        {% endif %}
+
+        <img
+          src="{% if user.profile_pictures %}/static/profile_pictures/{{ user.profile_pictures }}{% else %}/static/profile_pictures/default_profile.png{% endif %}"
+          alt="Profile Picture"
+          class="profile-picture"
+          {%
+          if
+          is_premium
+          %}
+          style="border: 3px solid #ffd700"
+          {%
+          endif
+          %}
+        />
+
+        <div class="info-btn-container">
+          <div class="profile-info">
+            <h1 class="username">{{ user.username }}</h1>
+            <p class="email">{{ user.email }}</p>
+            <p class="join-date">
+              Joined At: {{ user.joined_at.strftime('%B %d, %Y') }}
+            </p>
+
+            <div class="stats">
+              <span><strong>{{ user.posts|length }}</strong> Posts</span>
+            </div>
+          </div>
+
+          <div class="back-container">
+            <a href="/" class="back_btn">X</a>
+          </div>
+        </div>
+      </header>
+
+      <!-- Posts Section -->
+      <section class="posts-section">
+        <div id="posts-container" class="posts-container">
+          {% if not user_data or user_data|length == 0 %}
+          <p class="no-posts">No posts available.</p>
+          {% else %} {% for post in user_data %}
+          <div class="post-card">
+            <div>
+              <h2>{{ post.title }}</h2>
+              <p class="meta">
+                By <strong>{{ post.username }}</strong> • Posted on {{
+                post.created_at.strftime('%B %d, %Y %H:%M') }}
+              </p>
+              <div
+                class="content-img {% if post.file %}side-by-side{% else %}text-only{% endif %}"
+              >
+                <p class="content">{{ post.content }}</p>
+                {% if post.file %}
+                <img
+                  src="/static/uploads/{{ post.file }}"
+                  class="img"
+                  alt="Post Image"
+                />
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="comments-section">
+              <h4>💬 Comments</h4>
+              <div class="comments-list">
+                {% if post.comments and post.comments|length > 0 %} {% for
+                comment in post.comments %}
+                <div class="comment">
+                  <div style="flex: 12">
+                    <p>
+                      <strong>{{ comment.user.username }}:</strong> {{
+                      comment.content }}
+                    </p>
+                    <p class="meta">
+                      {{ comment.created_at.strftime('%B %d, %Y %H:%M') }}
+                    </p>
+                  </div>
+                </div>
+                {% endfor %} {% else %}
+                <p class="no-comments">No comments yet.</p>
+                {% endif %}
+              </div>
+              <form
+                onsubmit="submitComment(event, {{ post.id }})"
+                class="comment-form"
+              >
+                <input
+                  type="text"
+                  id="comment-input-{{ post.id }}"
+                  name="content"
+                  class="comment-input"
+                  placeholder="Write a comment..."
+                  required
+                />
+                <button type="submit" class="btn btn-small">Post</button>
+              </form>
+            </div>
+          </div>
+          {% endfor %} {% endif %}
+        </div>
+      </section>
+    </div>
+    <script>
+      const token = localStorage.getItem("access_token");
+
+      const submitComment = (e, postId) => {
+        e.preventDefault();
+        const input = document.getElementById(`comment-input-${postId}`);
+        const content = input.value.trim();
+        if (!content) return;
+
+        fetch(`/comment/add_comment/${postId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ content }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            input.value = "";
+            window.location.reload(); // or re-render comments dynamically
+          })
+          .catch(() => alert("Could not post comment."));
+      };
+    </script>
+  </body>
+</html>

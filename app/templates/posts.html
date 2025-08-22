@@ -12,9 +12,18 @@
   </head>
   <body>
     <div class="container">
+      
       <header class="header">
         <h1>📝 All Blog Posts</h1>
        
+        <a href="/explore/explore-page" class="user_search_btn" id="user_search_btn" style="display: none;">
+          <svg xmlns="http://www.w3.org/2000/svg"  width="24" height="24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+  <circle cx="11" cy="11" r="8"></circle>
+  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+</svg>
+  
+        </a>
+      
         <div class="actions"></button>
           <div
             class="my-posts-toggle"
@@ -104,6 +113,7 @@
         document.getElementById("my_post_label").style.display = "inline-block";
         document.getElementById("my_post").style.display = "inline-block";
         document.getElementById("profile-btn").style.display = "inline-block";
+        document.getElementById("user_search_btn").style.display = "inline-block";
 
       } else {
         document.getElementById("login-btn").style.display = "inline-block";
