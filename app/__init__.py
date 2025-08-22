@@ -9,6 +9,7 @@ from .routes.admin import admin_bp
 from .routes.stripe import stripe_bp
 from .routes.webhook import weebhook_bp
 from .routes.subscriptions import subscriptions_bp
+from .routes.explore import explore_bp
 from . import socket_event
 
 def create_app(config = "config.Config"):
@@ -29,6 +30,7 @@ def create_app(config = "config.Config"):
     app.register_blueprint(profile_bp, url_prefix="/profile/")
     app.register_blueprint(stripe_bp, url_prefix="/stripe")
     app.register_blueprint(subscriptions_bp, url_prefix="/subscription")
+    app.register_blueprint(explore_bp, url_prefix="/explore")
     app.register_blueprint(weebhook_bp)
 
     return app

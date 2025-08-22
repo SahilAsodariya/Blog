@@ -28,6 +28,7 @@ class Subscription(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     stripe_subscription_id = db.Column(db.String(255), nullable=True)  # Store Stripe subscription ID if needed
     start_date = db.Column(db.DateTime, default=get_ist_time)
+    status = db.Column(db.String(50), default="active") # active, canceled, past_due, unpaid
     end_date = db.Column(db.DateTime, default=get_ist_time_after_6_months)
 
     
