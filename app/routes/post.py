@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 from sqlalchemy import func
 from ..utils.image_compres_utils import compress_image
 from flask_socketio import emit
+from ..utils.image_compres_utils import delete_old_img
 
 
 
@@ -101,7 +102,7 @@ def create_post():
 
             # Handle file upload if file is provided and valid
             if file and file.filename != '' and allowed_file(file.filename):
-                filename = compress_image(file)
+                filename = compress_image(file,user_id)
 
         # Create and save post
         post = Post(title=title, content=content, user_id=user_id, file=filename)
@@ -129,6 +130,7 @@ def edit_page(post_id):
 @post_bp.route('/update/<int:post_id>',methods=['GET','POST','PUT'])
 @jwt_required()
 def update_post(post_id):
+    user_id = get_jwt_identity()
     post = Post.query.get(post_id)
     if not post:
         return jsonify('Post is not available'), 404
@@ -145,9 +147,11 @@ def update_post(post_id):
             content = request.form.get('content')
             file = request.files.get('file')
             
+            delete_old_img(user_id, post.file)
+            
             #Handle file upload if file is provided and valid
             if file and file.filename != '' and allowed_file(file.filename):
-                file_name = compress_image(file)
+                file_name = compress_image(file,user_id)
                 post.file = file_name
             
             
@@ -161,9 +165,12 @@ def update_post(post_id):
 @post_bp.route('/delete/<int:post_id>', methods=['GET','POST','DELETE'])
 @jwt_required()
 def delete_post(post_id):
+    user_id = get_jwt_identity()
     post = Post.query.get(post_id)
     if not post:
         return jsonify("Post is not available.")
+    
+    delete_old_img(user_id, post.file)
     
     db.session.delete(post)
     db.session.commit()

@@ -25,6 +25,7 @@ def register():
             name = data.get('name')
             email = data.get('email')
             password = data.get('password')
+            # admin = data.get('is_admin')
             
         else:
             name = request.form.get('name')
@@ -51,7 +52,7 @@ def register():
             return {"message": "Email already registered"}, 400
         else:
             hased_password = generate_password_hash(password)
-            new_user = User(username=name, email=valid_email, password=hased_password,  profile_pictures='default_profile.png')
+            new_user = User(username=name, email=valid_email, password=hased_password,  profile_pictures= None)
             db.session.add(new_user)
             db.session.commit()
             send_email(

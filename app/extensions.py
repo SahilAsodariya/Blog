@@ -6,9 +6,11 @@ from flask_socketio import SocketIO
 
 
 
+
 db = SQLAlchemy() 
 migrate = Migrate()
 jwt = JWTManager()
 mail = Mail()
 socketio = SocketIO(cors_allowed_origins="*")
 online_users = {}
+

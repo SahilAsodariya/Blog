@@ -20,7 +20,14 @@
         <div class="profile-pic-container">
           <img
             id="profilePreview"
-            src="{{ url_for('static', filename='profile_pictures/' ~ profile_pic) }}"
+            
+            {% if profile_pic %}
+               src="{{ url_for('static', filename='media/user_' ~ (user_id|string) ~ '/' ~ profile_pic) }}"
+            {% else %}
+               src="{{ url_for('static', filename='media/default_profile.png') }}"
+            {% endif %}
+
+             
             alt="Default Profile Picture"
           />
         </div>
@@ -63,6 +70,7 @@
                 alert("Profile picture updated successfully!");
                 window.location.href = "/profile/";
               } else {
+                console.log(response)
                 alert("Failed to update profile picture.");
               }
             })

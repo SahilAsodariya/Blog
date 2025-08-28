@@ -65,7 +65,8 @@ def view_profile(user_id):
         user_data=user_data,
         user=user,
         is_premium=is_premium,
-        is_admin=is_admin
+        is_admin=is_admin,
+        user_id=user_id
     ),
     200,
 )

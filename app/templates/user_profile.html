@@ -118,7 +118,7 @@
           </div>
 
           <div class="back-container">
-            <a href="/" class="back_btn">X</a>
+            <a href="/explore/explore-page" class="back_btn">X</a>
           </div>
         </div>
       </header>
@@ -142,7 +142,7 @@
                 <p class="content">{{ post.content }}</p>
                 {% if post.file %}
                 <img
-                  src="/static/uploads/{{ post.file }}"
+                  src="/static/media/user_{{user_id}}/{{ post.file }}"
                   class="img"
                   alt="Post Image"
                 />

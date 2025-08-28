@@ -4,6 +4,7 @@ from functools import wraps
 from ..extensions import db
 from ..models import User,Comment, Subscription
 from ..schema.schema import UserSchema# update with actual import
+from ..utils.image_compres_utils import delete_folder
 
 admin_bp = Blueprint('admin',__name__)
 
@@ -46,6 +47,8 @@ def delete_comment(id):
 def all_users():
     users = User.query.filter_by(is_admin=False).all()
     return jsonify(users_shcema.dump(users)), 200
+
+
     
 @admin_bp.route('/delete_user/<int:user_id>', methods=['DELETE', 'POST','GET'])
 def delete_user(user_id):
@@ -56,6 +59,7 @@ def delete_user(user_id):
         for sub in subscription_user:
             db.session.delete(sub)
         db.session.commit()
+        delete_folder(user_id)
         return render_template("admin_dashboard.html", message="User deleted successfully")
     return jsonify({"error": "User not found"}), 404
 

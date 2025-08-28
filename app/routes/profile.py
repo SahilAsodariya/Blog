@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, jsonify, request
 from ..models import User, Post, Subscription
 from ..schema.schema import CommentSchema,UserSchema,SubscriptionSchema
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from ..utils.image_compres_utils import compress_profile_pic
+from ..utils.image_compres_utils import compress_image
 from ..extensions import db
 
 
@@ -58,7 +58,7 @@ def profile_pic(id):
         return jsonify({"message": "User not found"}), 404
     
     profile_pic = user.profile_pictures
-    return render_template('add_profile_pic.html', profile_pic=profile_pic)
+    return render_template('add_profile_pic.html', profile_pic=profile_pic, user_id=id)
 
 @profile_bp.route('/edit_profile_pic', methods=['POST'])
 @jwt_required()
@@ -73,7 +73,7 @@ def edit_profile_pic():
         picture = request.files.get('profile_pictures')
         
         if picture:
-            fileName = compress_profile_pic(picture)
+            fileName = compress_image(picture,id)
             user.profile_pictures = fileName
             db.session.commit()
             return jsonify({"message": "Profile picture updated successfully"}), 200

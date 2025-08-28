@@ -49,6 +49,7 @@ class SubscriptionSchema(SQLAlchemySchema):
         load_instance = True
         
     id = auto_field()
+    email = auto_field()
     user_id = auto_field()
     stripe_subscription_id = auto_field()
     start_date = auto_field()

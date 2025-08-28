@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, render_template
 from flask_jwt_extended import jwt_required, get_jwt_identity
 import stripe
+from ..models import User
 
 stripe_bp = Blueprint('stripe', __name__)
 
@@ -12,6 +13,9 @@ def index():
 @jwt_required()  # Ensure the user is authenticated
 def create_checkout_session():
     user_id = get_jwt_identity()
+    user = User.query.filter_by(id=user_id).first()
+    email = user.email
+    
     try:
         checkout_session = stripe.checkout.Session.create(
         payment_method_types=['card'],
@@ -23,7 +27,8 @@ def create_checkout_session():
         success_url='http://127.0.0.1:5000/stripe/success?session_id={CHECKOUT_SESSION_ID}',
         cancel_url='http://127.0.0.1:5000/stripe/cancel',
         metadata={
-        "user_id": user_id  # 👈 store your app's user_id here
+        "user_id": user_id,  # 👈 store your app's user_id here
+        "email" : email
     }
     )
         return jsonify({'id': checkout_session.id})
