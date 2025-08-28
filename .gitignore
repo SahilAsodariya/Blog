@@ -31,3 +31,5 @@ Thumbs.db
 
 app/static/media/
 # Ignore all files in the uploads directory
+
+**/celerybeat-schedule*
