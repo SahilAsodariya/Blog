@@ -12,12 +12,15 @@ from .routes.webhook import weebhook_bp
 from .routes.subscriptions import subscriptions_bp
 from .routes.explore import explore_bp
 from . import socket_event
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 
 
 def create_app(config = "config.Config"):
     app = Flask(__name__)
+    app.url_map.strict_slashes = False
     app.config.from_object(config)
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
     
     db.init_app(app)
     migrate.init_app(app,db)

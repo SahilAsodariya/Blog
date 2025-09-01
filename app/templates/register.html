@@ -52,7 +52,7 @@ head %}
       const password = document.querySelector('input[name="password"]').value;
       console.log(email, password);
 
-      fetch("/auth/register", {
+      fetch("/auth/register/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password }),
