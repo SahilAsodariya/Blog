@@ -103,17 +103,4 @@ def stripe_webhook():
 
     return jsonify(success=True), 200   
 
-@weebhook_bp.route("/webhook/user", methods=["GET"])
-def get_user_subscription():    
-    user = Subscription.query.all()
-    result = subscription_schema.dump(user)
-    return jsonify(result), 200
 
-
-# @weebhook_bp.route("/webhook/delete/user", methods=["POST"])
-# def delete_user_subscription():    
-#     user = Subscription.query.all()
-#     for u in user:
-#         db.session.delete(u)
-#     db.session.commit()
-#     return jsonify("Badha saff ho bhai."), 200

@@ -149,7 +149,7 @@ def reset_password_request():
                             <p><strong>Note:-</strong> This link will expire in 30 minutes.</p>
                         '''
                        )
-            return jsonify({'success': 'If this email exists, a reset link has been sent.'}), 200
+            return jsonify({'success': 'If this email exists, a reset link has been sent.', 'password_token' : token}), 200
         return jsonify({"error": "Please add email that you add to register"}), 400
     return render_template('reset_password_request.html')
 
