@@ -3,6 +3,7 @@ from app.extensions import socketio
 import os
 
 app = create_app()
+app.url_map.strict_slashes = False
     
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
