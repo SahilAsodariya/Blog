@@ -8,6 +8,7 @@ from flask_jwt_extended import create_access_token,jwt_required, get_jwt_identit
 from email_validator import validate_email, EmailNotValidError
 from ..utils.email_utils import send_email
 from datetime import timedelta
+  
 
 
 
@@ -15,6 +16,7 @@ from datetime import timedelta
 auth_bp = Blueprint('auth',__name__)
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
+
         
         
 @auth_bp.route('register/', methods=['GET','POST'])
