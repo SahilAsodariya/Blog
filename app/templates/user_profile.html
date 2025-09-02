@@ -92,7 +92,7 @@
 
         <img
           src="{% if user.profile_pictures %}
-                      {{ url_for('static', filename='media/user_' ~ user.profile_pictures) }}
+                      {{ url_for('static', filename='media/user_' ~ user_id|string ~ '/' ~ user.profile_pictures) }}
                     {% else %}
                       {{ url_for('static', filename='profile_pictures/default_profile.png') }}
                     {% endif %}
