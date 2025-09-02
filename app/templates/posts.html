@@ -170,7 +170,7 @@
                 <p class="content">${post.content}</p>
                 ${
                   hasImage
-                    ? `<img src="{{url_for('static', filename='media/user_${userId}/${post.file}') }}" class="img" alt="Post Image" />`
+                    ? `<img src="static/media/user_${userId}/${post.file}" class="img" alt="Post Image" />`
                     : ""
                 }
               </div>

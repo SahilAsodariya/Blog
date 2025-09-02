@@ -22,10 +22,12 @@
             id="profilePreview"
             
             {% if profile_pic %}
-               src="{{ url_for('static', filename='media/user_' ~ (user_id|string) ~ '/' ~ profile_pic) }}"
-            {% else %}
-               src="{{ url_for('static', filename='media/default_profile.png') }}"
-            {% endif %}
+                src="{{ url_for('static', filename='media/user_' ~ user_id|string ~ '/' ~ profile_pic) }}" alt="Profile"
+              {% else %}
+                 src="{{ url_for('static', filename='media/default_profile.png') }}" alt="Default Profile"
+
+              {% endif %}
+
 
              
             alt="Default Profile Picture"

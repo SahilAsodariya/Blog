@@ -91,7 +91,12 @@
         {% endif %}
 
         <img
-          src="{% if user.profile_pictures %}{{url_for('static' , filename='profile_pictures/{{ user.profile_pictures }} ') }}{% else %}{{url_for('static' , filename='profile_pictures/default_profile.png ') }}{% endif %}"
+          src="{% if user.profile_pictures %}
+                      {{ url_for('static', filename='media/user_' ~ user.profile_pictures) }}
+                    {% else %}
+                      {{ url_for('static', filename='profile_pictures/default_profile.png') }}
+                    {% endif %}
+                    "
           alt="Profile Picture"
           class="profile-picture"
           {%
@@ -142,7 +147,8 @@
                 <p class="content">{{ post.content }}</p>
                 {% if post.file %}
                 <img
-                  src="{{url_for('static' , filename='media/user_{{user_id}}/{{ post.file }} ') }}"
+                  src="{{ url_for('static', filename='media/user_' ~ user_id|string ~ '/' ~ post.file) }}"
+                  alt="Post Image"
                   class="img"
                   alt="Post Image"
                 />
