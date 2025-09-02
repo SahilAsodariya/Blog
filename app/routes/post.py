@@ -147,10 +147,10 @@ def update_post(post_id):
             content = request.form.get('content')
             file = request.files.get('file')
             
-            delete_old_img(user_id, post.file)
             
             #Handle file upload if file is provided and valid
             if file and file.filename != '' and allowed_file(file.filename):
+                delete_old_img(user_id, post.file)
                 file_name = compress_image(file,user_id)
                 post.file = file_name
             
