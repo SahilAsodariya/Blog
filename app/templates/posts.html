@@ -101,7 +101,8 @@
       const userId = localStorage.getItem("user_id");
       let is_admin = false;
 
-      const socket = io();
+      const socket = io({ secure: true, transports: ["websocket", "polling"] });
+
       if (userId) {
         socket.emit("register_user", { user_id: userId });
         socket.on("notification", function (data) {
@@ -124,7 +125,7 @@
         const search = document.querySelector(".search").value.trim();
         const showMyPosts = document.getElementById("my_post").checked;
 
-        fetch(`${window.location.origin}/post?page=${page}&limit=10&search=${search}`, {
+        fetch(`/post?page=${page}&limit=10&search=${search}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

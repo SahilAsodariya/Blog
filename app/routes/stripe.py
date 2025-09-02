@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, render_template
+from flask import Blueprint, jsonify, render_template, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 import stripe
 from ..models import User
@@ -24,8 +24,8 @@ def create_checkout_session():
             'quantity': 1,
         }],
         mode='subscription',
-        success_url='http://127.0.0.1:5000/stripe/success?session_id={CHECKOUT_SESSION_ID}',
-        cancel_url='http://127.0.0.1:5000/stripe/cancel',
+        success_url=f'{request.url_root}stripe/success?session_id={{CHECKOUT_SESSION_ID}}',
+        cancel_url=f'{request.url_root}stripe/cancel',
         metadata={
         "user_id": user_id,  # 👈 store your app's user_id here
         "email" : email
