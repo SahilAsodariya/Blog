@@ -147,7 +147,7 @@
                 <p class="content">{{ post.content }}</p>
                 {% if post.file %}
                 <img
-                  src="{{ url_for('static', filename='media/user_' ~ user_id|string ~ '/' ~ post.file) }}"
+                  src="{{ url_for('static', filename='media/user_' ~ post.user_id|string ~ '/' ~ post.file) }}"
                   alt="Post Image"
                   class="img"
                   alt="Post Image"
