@@ -125,7 +125,7 @@
         const search = document.querySelector(".search").value.trim();
         const showMyPosts = document.getElementById("my_post").checked;
 
-        fetch(`/post?page=${page}&limit=10&search=${search}`, {
+        fetch(`https://blog-web-1-2071.onrender.com/post?page=${page}&limit=10&search=${search}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
