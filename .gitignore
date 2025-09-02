@@ -29,7 +29,9 @@ migrations/versions/__pycache__/
 # OS specific
 Thumbs.db
 
-app/static/media/
+# Ignore uploaded user media but keep default assets
+app/static/media/user_*/
+
 # Ignore all files in the uploads directory
 
 **/celerybeat-schedule*
