@@ -41,7 +41,7 @@ def success():
 
 @stripe_bp.route('/cancel', methods=['GET'])        
 def cancel():
-    return jsonify({'message': 'Payment cancelled.'}), 200
+    return render_template('posts.html',{'message': 'Payment cancelled.'}), 200
 
 
 
