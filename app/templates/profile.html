@@ -102,8 +102,8 @@
             </button>
             <img src="${
               data.user.profile_pictures
-                ? `/static/media/user_${userId}/${data.user.profile_pictures}`
-                : `/static/media/default_profile.png`
+                ? `{{ url_for('static', filename='media/user_${userId}/${data.user.profile_pictures}') }}`
+                : `{{ url_for('static', filename='media/default_profile.png') }}`
             }" alt="Profile Picture" class="profile-picture" ${
               data.is_premium ? 'style="border: 3px solid #FFD700;"' : ""
             } />
@@ -186,7 +186,7 @@
                 <p class="content">${post.content}</p>
                 ${
                   hasImage
-                    ? `<img src="/static/media/user_${userId}/${post.file}" class="img" alt="Post Image" />`
+                    ? `<img src="{{ url_for('static', filename='media/user_${userId}/${post.file}') }}" class="img" alt="Post Image" />`
                     : ""
                 }
               </div>
