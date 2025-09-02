@@ -125,7 +125,7 @@
         const search = document.querySelector(".search").value.trim();
         const showMyPosts = document.getElementById("my_post").checked;
 
-        fetch(`${window.location.origin}post?page=${page}&limit=10&search=${search}`, {
+        fetch(`/post`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
