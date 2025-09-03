@@ -100,13 +100,15 @@
             <button class="add_profile_btn"  onclick="goToAddProfilePic()">
       +
             </button>
+            <div class="profile-pic-container" ${
+              data.is_premium ? 'style="border: 3px solid #FFD700;"' : ""
+            }>
             <img src="${
               data.user.profile_pictures
                 ? `/static/media/user_${userId}/${data.user.profile_pictures}`
                 : `/static/media/default_profile.png`
-            }" alt="Profile Picture" class="profile-picture" ${
-              data.is_premium ? 'style="border: 3px solid #FFD700;"' : ""
-            } />
+            }" alt="Profile Picture" />
+            </div>
         <div class="info-btn-container">
            
         <div class="profile-info">
